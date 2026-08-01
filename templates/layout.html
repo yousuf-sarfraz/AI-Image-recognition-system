@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}
+        Image & Text Recognition AI
+        {% endblock %}
+    </title>
+
+    <!-- Google Font -->
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <!-- Responsive CSS -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/responsive.css') }}">
+
+</head>
+
+<body>
+
+    <!-- ================= Header ================= -->
+
+    <header>
+
+        <div class="container">
+
+            <nav>
+
+                <a href="{{ url_for('main.home') }}" class="logo">
+
+                    Image<span>AI</span>
+
+                </a>
+
+                <ul>
+
+                    <li>
+
+                        <a href="{{ url_for('main.home') }}">Home</a>
+
+                    </li>
+
+                    <li>
+
+                        <a href="{{ url_for('main.about') }}">About</a>
+
+                    </li>
+
+                </ul>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+    <!-- Flash Messages -->
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-container">
+
+                {% for message in messages %}
+
+                    <div class="flash-message">
+
+                        {{ message }}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- ================= Main Content ================= -->
+
+    <main>
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+    <!-- ================= Footer ================= -->
+
+    <footer>
+
+        <div class="container">
+
+            <p>
+
+                © 2026 Image & Text Recognition AI | Developed with Flask & AI
+
+            </p>
+
+        </div>
+
+    </footer>
+
+    <!-- JavaScript -->
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+
+</html>
