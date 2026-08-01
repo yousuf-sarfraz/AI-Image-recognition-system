@@ -1,0 +1,162 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Recognition Results | Image & Text Recognition AI
+{% endblock %}
+
+{% block content %}
+
+<!-- ================= Results Section ================= -->
+
+<section class="results-section">
+
+    <div class="container">
+
+        <h1>Recognition Results</h1>
+
+        <p class="section-description">
+            Below are the AI-generated results after analyzing your uploaded image.
+        </p>
+
+        <div class="results-grid">
+
+            <!-- Uploaded Image -->
+
+            <div class="result-card">
+
+                <h2>
+
+                    <i class="fa-solid fa-image"></i>
+
+                    Uploaded Image
+
+                </h2>
+
+                <img
+                    src="{{ url_for('uploaded_file', filename=image) }}"
+                    alt="Uploaded Image"
+                    class="result-image"
+                    loading="lazy">
+
+            </div>
+
+            <!-- Extracted Text -->
+
+            <div class="result-card">
+
+                <h2>
+
+                    <i class="fa-solid fa-file-lines"></i>
+
+                    Extracted Text
+
+                </h2>
+
+                {% if text %}
+
+                <pre>{{ text }}</pre>
+
+                {% else %}
+
+                <p class="empty-result">
+
+                    No readable text was found.
+
+                </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <!-- Detected Objects -->
+
+        <div class="result-card">
+
+            <h2>
+
+                <i class="fa-solid fa-object-group"></i>
+
+                Detected Objects
+
+            </h2>
+
+            {% if objects %}
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>#</th>
+
+                        <th>Object</th>
+
+                        <th>Confidence</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for object in objects %}
+
+                    <tr>
+
+                        <td>{{ loop.index }}</td>
+
+                        <td>{{ object.class_name }}</td>
+
+                        <td>{{ object.confidence }}%</td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            <p class="summary">
+
+                Total Objects Detected:
+                <strong>{{ objects|length }}</strong>
+
+            </p>
+
+            {% else %}
+
+            <p class="empty-result">
+
+                No objects were detected in the uploaded image.
+
+            </p>
+
+            {% endif %}
+
+        </div>
+
+        <!-- Action Buttons -->
+
+        <div class="action-buttons">
+
+            <a
+                href="{{ url_for('main.home') }}"
+                class="btn">
+
+                <i class="fa-solid fa-arrow-left"></i>
+
+                Analyze Another Image
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}
