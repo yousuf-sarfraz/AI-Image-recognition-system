@@ -1,0 +1,299 @@
+/* ==========================================
+   Responsive Design
+========================================== */
+
+
+/* ==========================================
+   Large Tablets & Small Laptops
+========================================== */
+
+@media (max-width: 1024px) {
+
+
+    .hero h1 {
+
+        font-size: 42px;
+
+    }
+
+
+    .feature-grid {
+
+        grid-template-columns: repeat(2, 1fr);
+
+    }
+
+
+    .results-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .upload-card {
+
+        padding: 35px;
+
+    }
+
+}
+
+
+
+/* ==========================================
+   Tablets
+========================================== */
+
+
+@media (max-width: 768px) {
+
+
+    .container {
+
+        width: 92%;
+
+    }
+
+
+    /* Navigation */
+
+
+    nav {
+
+        flex-direction: column;
+
+        height:auto;
+
+        padding:20px 0;
+
+        gap:15px;
+
+    }
+
+
+    nav ul {
+
+        gap:20px;
+
+    }
+
+
+
+    /* Hero */
+
+
+    .hero {
+
+        padding:60px 0;
+
+    }
+
+
+    .hero h1 {
+
+        font-size:34px;
+
+    }
+
+
+    .hero p {
+
+        font-size:16px;
+
+    }
+
+
+
+    /* Upload */
+
+
+    .upload-card {
+
+        padding:25px;
+
+    }
+
+
+    .upload-box {
+
+        padding:40px 20px;
+
+    }
+
+
+    .upload-box i {
+
+        font-size:45px;
+
+    }
+
+
+
+    /* Features */
+
+
+    .feature-grid {
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    .features h2 {
+
+        font-size:30px;
+
+    }
+
+
+
+    /* Results */
+
+
+    .results-section {
+
+        padding:50px 0;
+
+    }
+
+
+    .results-section > .container > h1 {
+
+        font-size:32px;
+
+    }
+
+
+}
+
+
+
+/* ==========================================
+   Mobile Devices
+========================================== */
+
+
+@media (max-width:480px) {
+
+
+    body {
+
+        font-size:14px;
+
+    }
+
+
+
+    .logo {
+
+        font-size:26px;
+
+    }
+
+
+
+    nav ul {
+
+        flex-direction:column;
+
+        text-align:center;
+
+        gap:10px;
+
+    }
+
+
+
+    .hero h1 {
+
+        font-size:28px;
+
+    }
+
+
+
+    .hero p {
+
+        font-size:15px;
+
+    }
+
+
+
+    .upload-card h2 {
+
+        font-size:24px;
+
+    }
+
+
+
+    .upload-box h3 {
+
+        font-size:20px;
+
+    }
+
+
+
+    button,
+    .btn {
+
+        width:100%;
+
+        padding:14px;
+
+    }
+
+
+
+    .result-card {
+
+        padding:20px;
+
+    }
+
+
+
+    table {
+
+        font-size:13px;
+
+    }
+
+
+    table th,
+    table td {
+
+        padding:10px;
+
+    }
+
+
+
+    footer {
+
+        padding:20px 0;
+
+    }
+
+}
+@media(max-width:768px){
+
+
+    .workflow{
+
+        grid-template-columns:1fr;
+
+    }
+
+
+    .about-header h1{
+
+        font-size:30px;
+
+    }
+
+
+}
