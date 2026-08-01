@@ -25,7 +25,8 @@ An AI-powered web application built with **Python** and **Flask** that performs 
 
    ```
 
-## 📁 Project Structure
+:
+🏗️ System Architecture
 
 * **Flask** manages the backend, routing, and application logic.
 * **YOLOv8** detects and classifies objects in uploaded images.
@@ -40,3 +41,37 @@ This project is developed for educational and learning purposes.
 ---
 
 This project demonstrates how modern computer vision and OCR technologies can be integrated into a practical web application for intelligent image analysis.
+📁 Project Structure
+
+AI-Image-Recognition-System/
+│
+├── app.py                  # Main Flask application
+├── config.py               # Configuration settings
+├── requirements.txt        # Project dependencies
+├── README.md               # Project documentation
+│
+├── models/
+│   └── yolov8n.pt          # YOLOv8 model weights
+│
+├── routes/
+│   └── main.py             # Application routes
+│
+├── services/
+│   ├── detector.py         # YOLO object detection
+│   ├── ocr.py              # EasyOCR text extraction
+│   ├── image_processor.py  # OpenCV image preprocessing
+│   └── utils.py            # Helper functions
+│
+├── templates/
+│   ├── index.html
+│   ├── result.html
+│   ├── about.html
+│   └── layout.html
+│
+├── static/
+│   ├── css/
+│   ├── js/
+│   └── images/
+│
+├── uploads/                # Uploaded images
+└── results/                # Processed output images
