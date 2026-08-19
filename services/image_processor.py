@@ -1,4 +1,11 @@
+# ============================================================
+# Image Processing Service
+# Image & Text Recognition AI
+# ============================================================
+
+import logging
 import os
+import uuid
 from typing import Optional
 
 import cv2
@@ -7,25 +14,61 @@ import numpy as np
 from config import Config
 
 
+# ============================================================
+# Logger
+# ============================================================
+
+logger = logging.getLogger(__name__)
+
+
+# ============================================================
+# Image Processing Service
+# ============================================================
+
 class ImageProcessor:
     """
-    Image Processing Service
+    Image Processing Service.
 
-    Provides image loading, resizing, denoising,
-    contrast enhancement, sharpening, grayscale
-    conversion, thresholding, and saving.
+    Provides separate processing pipelines for:
+
+    1. General image processing
+    2. OCR-specific image preparation
+
+    Supported operations include:
+
+    - Image loading
+    - Resizing
+    - Denoising
+    - Contrast enhancement
+    - Sharpening
+    - Grayscale conversion
+    - Thresholding
+    - Processed image saving
     """
 
     def __init__(self):
+        """
+        Initialize the image processor using
+        centralized application configuration.
+        """
+
         self.result_folder = Config.RESULT_FOLDER
         self.max_width = Config.IMAGE_SIZE
 
-        # Make sure the result folder exists
-        os.makedirs(self.result_folder, exist_ok=True)
+        # Make sure the result directory exists.
+        os.makedirs(
+            self.result_folder,
+            exist_ok=True
+        )
 
-    # ==========================================================
+        logger.info(
+            "ImageProcessor initialized. Result folder: %s",
+            self.result_folder
+        )
+
+    # ========================================================
     # MAIN PROCESSING
-    # ==========================================================
+    # ========================================================
 
     def process_image(
         self,
@@ -33,12 +76,26 @@ class ImageProcessor:
         save_result: bool = True
     ) -> str:
         """
-        Run the complete image preprocessing pipeline.
+        Run the general image-processing pipeline.
+
+        Pipeline:
+
+            Load
+              ↓
+            Resize
+              ↓
+            Denoise
+              ↓
+            Improve Contrast
+              ↓
+            Sharpen
+              ↓
+            Save
 
         Parameters
         ----------
         image_path : str
-            Path of the original image.
+            Path to the original image.
 
         save_result : bool
             Whether to save the processed image.
@@ -46,23 +103,45 @@ class ImageProcessor:
         Returns
         -------
         str
-            Path of the processed image.
+            Path to the processed image when saved.
+
+        Notes
+        -----
+        When save_result is False, the original path is
+        returned for backward compatibility.
         """
 
-        image = self.load_image(image_path)
+        image = self.load_image(
+            image_path
+        )
 
-        image = self.resize_image(image)
-        image = self.denoise_image(image)
-        image = self.improve_contrast(image)
-        image = self.sharpen_image(image)
+        image = self.resize_image(
+            image
+        )
 
-        if save_result:
-            return self.save_image(
-                image,
-                image_path
-            )
+        image = self.denoise_image(
+            image
+        )
 
-        return image_path
+        image = self.improve_contrast(
+            image
+        )
+
+        image = self.sharpen_image(
+            image
+        )
+
+        if not save_result:
+            return image_path
+
+        return self.save_image(
+            image,
+            image_path
+        )
+
+    # ========================================================
+    # OCR PROCESSING
+    # ========================================================
 
     def process_for_ocr(
         self,
@@ -71,20 +150,62 @@ class ImageProcessor:
         """
         Prepare an image specifically for OCR.
 
-        OCR generally works better with a clean,
-        high-contrast grayscale image.
+        Pipeline:
+
+            Load
+              ↓
+            Resize
+              ↓
+            Denoise
+              ↓
+            Improve Contrast
+              ↓
+            Sharpen
+              ↓
+            Grayscale
+              ↓
+            Otsu Threshold
+              ↓
+            Save
+
+        Parameters
+        ----------
+        image_path : str
+            Path to the original image.
+
+        Returns
+        -------
+        str
+            Path to the OCR-processed image.
         """
 
-        image = self.load_image(image_path)
+        image = self.load_image(
+            image_path
+        )
 
-        image = self.resize_image(image)
-        image = self.denoise_image(image)
-        image = self.improve_contrast(image)
-        image = self.sharpen_image(image)
+        image = self.resize_image(
+            image
+        )
 
-        gray = self.convert_to_grayscale(image)
+        image = self.denoise_image(
+            image
+        )
 
-        threshold = self.threshold_image(gray)
+        image = self.improve_contrast(
+            image
+        )
+
+        image = self.sharpen_image(
+            image
+        )
+
+        gray = self.convert_to_grayscale(
+            image
+        )
+
+        threshold = self.threshold_image(
+            gray
+        )
 
         return self.save_processed_image(
             threshold,
@@ -92,32 +213,42 @@ class ImageProcessor:
             suffix="_ocr"
         )
 
-    # ==========================================================
-    # IMAGE LOADING
-    # ==========================================================
+    # ========================================================
+    # LOAD IMAGE
+    # ========================================================
 
-    def load_image(self, image_path: str):
+    def load_image(
+        self,
+        image_path: str
+    ):
         """
         Load an image using OpenCV.
 
         Raises
         ------
+        ValueError
+            If the image path is empty or OpenCV
+            cannot read the image.
+
         FileNotFoundError
             If the image does not exist.
-
-        ValueError
-            If OpenCV cannot read the image.
         """
 
         if not image_path:
-            raise ValueError("Image path cannot be empty.")
+            raise ValueError(
+                "Image path cannot be empty."
+            )
 
-        if not os.path.isfile(image_path):
+        if not os.path.isfile(
+            image_path
+        ):
             raise FileNotFoundError(
                 f"Image not found: {image_path}"
             )
 
-        image = cv2.imread(image_path)
+        image = cv2.imread(
+            image_path
+        )
 
         if image is None:
             raise ValueError(
@@ -126,9 +257,9 @@ class ImageProcessor:
 
         return image
 
-    # ==========================================================
-    # RESIZING
-    # ==========================================================
+    # ========================================================
+    # RESIZE
+    # ========================================================
 
     def resize_image(
         self,
@@ -136,9 +267,18 @@ class ImageProcessor:
         max_width: Optional[int] = None
     ):
         """
-        Resize image while preserving aspect ratio.
+        Resize an image while preserving aspect ratio.
 
         Images smaller than max_width are not enlarged.
+
+        Parameters
+        ----------
+        image
+            OpenCV image.
+
+        max_width : int | None
+            Maximum allowed image width.
+            Uses Config.IMAGE_SIZE when omitted.
         """
 
         if image is None:
@@ -149,6 +289,11 @@ class ImageProcessor:
         if max_width is None:
             max_width = self.max_width
 
+        if max_width <= 0:
+            raise ValueError(
+                "max_width must be greater than zero."
+            )
+
         height, width = image.shape[:2]
 
         if width <= max_width:
@@ -156,22 +301,37 @@ class ImageProcessor:
 
         ratio = max_width / width
 
-        new_width = int(width * ratio)
-        new_height = int(height * ratio)
+        new_width = max(
+            1,
+            int(width * ratio)
+        )
+
+        new_height = max(
+            1,
+            int(height * ratio)
+        )
 
         return cv2.resize(
             image,
-            (new_width, new_height),
+            (
+                new_width,
+                new_height
+            ),
             interpolation=cv2.INTER_AREA
         )
 
-    # ==========================================================
+    # ========================================================
     # DENOISING
-    # ==========================================================
+    # ========================================================
 
-    def denoise_image(self, image):
+    def denoise_image(
+        self,
+        image
+    ):
         """
         Remove noise from a color image.
+
+        The denoising parameters come from Config.
         """
 
         if image is None:
@@ -179,25 +339,35 @@ class ImageProcessor:
                 "Cannot denoise an empty image."
             )
 
+        # fastNlMeansDenoisingColored requires
+        # a 3-channel color image.
+        if len(image.shape) != 3:
+            return image
+
         return cv2.fastNlMeansDenoisingColored(
             image,
             None,
-            10,
-            10,
-            7,
-            21
+            Config.DENOISE_H,
+            Config.DENOISE_H_COLOR,
+            Config.DENOISE_TEMPLATE_WINDOW,
+            Config.DENOISE_SEARCH_WINDOW
         )
 
-    # ==========================================================
+    # ========================================================
     # CONTRAST
-    # ==========================================================
+    # ========================================================
 
-    def improve_contrast(self, image):
+    def improve_contrast(
+        self,
+        image
+    ):
         """
-        Improve image contrast using CLAHE.
+        Improve local image contrast using CLAHE.
 
-        CLAHE enhances local contrast while helping
-        preserve image details.
+        CLAHE is applied to the luminance channel
+        when processing a color image.
+
+        Configuration values are loaded from Config.
         """
 
         if image is None:
@@ -205,16 +375,26 @@ class ImageProcessor:
                 "Cannot improve contrast of an empty image."
             )
 
+        clahe = cv2.createCLAHE(
+            clipLimit=Config.CLAHE_CLIP_LIMIT,
+            tileGridSize=Config.CLAHE_TILE_GRID_SIZE
+        )
+
+        # Grayscale image
+        if len(image.shape) == 2:
+
+            return clahe.apply(
+                image
+            )
+
+        # Color image
         lab = cv2.cvtColor(
             image,
             cv2.COLOR_BGR2LAB
         )
 
-        l_channel, a_channel, b_channel = cv2.split(lab)
-
-        clahe = cv2.createCLAHE(
-            clipLimit=2.0,
-            tileGridSize=(8, 8)
+        l_channel, a_channel, b_channel = (
+            cv2.split(lab)
         )
 
         l_channel = clahe.apply(
@@ -234,13 +414,17 @@ class ImageProcessor:
             cv2.COLOR_LAB2BGR
         )
 
-    # ==========================================================
-    # SHARPENING
-    # ==========================================================
+    # ========================================================
+    # SHARPEN
+    # ========================================================
 
-    def sharpen_image(self, image):
+    def sharpen_image(
+        self,
+        image
+    ):
         """
-        Sharpen image details.
+        Sharpen image details using the configured
+        sharpening kernel.
         """
 
         if image is None:
@@ -249,11 +433,7 @@ class ImageProcessor:
             )
 
         kernel = np.array(
-            [
-                [0, -1, 0],
-                [-1, 5, -1],
-                [0, -1, 0]
-            ],
+            Config.SHARPEN_KERNEL,
             dtype=np.float32
         )
 
@@ -263,13 +443,19 @@ class ImageProcessor:
             kernel
         )
 
-    # ==========================================================
+    # ========================================================
     # GRAYSCALE
-    # ==========================================================
+    # ========================================================
 
-    def convert_to_grayscale(self, image):
+    def convert_to_grayscale(
+        self,
+        image
+    ):
         """
-        Convert BGR image to grayscale.
+        Convert a BGR image to grayscale.
+
+        If the image is already grayscale,
+        it is returned unchanged.
         """
 
         if image is None:
@@ -285,17 +471,25 @@ class ImageProcessor:
             cv2.COLOR_BGR2GRAY
         )
 
-    # ==========================================================
-    # THRESHOLDING
-    # ==========================================================
+    # ========================================================
+    # THRESHOLD
+    # ========================================================
 
-    def threshold_image(self, image):
+    def threshold_image(
+        self,
+        image
+    ):
         """
         Apply Otsu binary thresholding.
 
-        Converts the image into a black-and-white
-        representation useful for OCR.
+        Otsu automatically determines a suitable
+        threshold value for the grayscale image.
         """
+
+        if image is None:
+            raise ValueError(
+                "Cannot threshold an empty image."
+            )
 
         gray = self.convert_to_grayscale(
             image
@@ -310,9 +504,9 @@ class ImageProcessor:
 
         return threshold
 
-    # ==========================================================
+    # ========================================================
     # SAVE IMAGE
-    # ==========================================================
+    # ========================================================
 
     def save_image(
         self,
@@ -320,7 +514,10 @@ class ImageProcessor:
         original_path: str
     ) -> str:
         """
-        Save a processed image using the original filename.
+        Save a generally processed image.
+
+        A unique filename is generated to prevent
+        conflicts between multiple uploads.
         """
 
         return self.save_processed_image(
@@ -329,6 +526,10 @@ class ImageProcessor:
             suffix="_processed"
         )
 
+    # ========================================================
+    # SAVE PROCESSED IMAGE
+    # ========================================================
+
     def save_processed_image(
         self,
         image,
@@ -336,12 +537,15 @@ class ImageProcessor:
         suffix: str = "_processed"
     ) -> str:
         """
-        Save a processed image with a unique suffix.
+        Save a processed image using a unique filename.
 
-        Example:
-            image.jpg
-            image_processed.jpg
-            image_ocr.jpg
+        Examples
+        --------
+        original.jpg
+
+        original_processed_a1b2c3d4.jpg
+
+        original_ocr_e5f6g7h8.jpg
         """
 
         if image is None:
@@ -362,8 +566,18 @@ class ImageProcessor:
             filename
         )
 
+        if not extension:
+            raise ValueError(
+                "Original image must have an extension."
+            )
+
+        unique_id = uuid.uuid4().hex[:8]
+
         output_filename = (
-            f"{name}{suffix}{extension}"
+            f"{name}"
+            f"{suffix}"
+            f"_{unique_id}"
+            f"{extension}"
         )
 
         output_path = os.path.join(
@@ -381,5 +595,10 @@ class ImageProcessor:
                 f"Failed to save processed image: "
                 f"{output_path}"
             )
+
+        logger.info(
+            "Processed image saved successfully: %s",
+            output_path
+        )
 
         return output_path

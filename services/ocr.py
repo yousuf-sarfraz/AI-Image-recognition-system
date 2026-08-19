@@ -13,23 +13,15 @@ import easyocr
 from config import Config
 
 
-# ============================================================
-# Logger
-# ============================================================
-
 logger = logging.getLogger(__name__)
 
 
 # ============================================================
-# Type Aliases
+# Type Alias
 # ============================================================
 
 OCRResult = Tuple[Any, str, float]
 
-
-# ============================================================
-# OCR Service
-# ============================================================
 
 class OCRService:
     """
@@ -39,16 +31,11 @@ class OCRService:
     """
 
     def __init__(self):
-        """
-        Initialize the EasyOCR reader and configuration.
-        """
 
         self.languages = Config.OCR_LANGUAGES
 
-        self.min_confidence = getattr(
-            Config,
-            "OCR_MIN_CONFIDENCE",
-            0.30
+        self.min_confidence = (
+            Config.OCR_MIN_CONFIDENCE
         )
 
         logger.info(
@@ -73,51 +60,46 @@ class OCRService:
         )
 
     # ========================================================
-    # PUBLIC API
+    # EXTRACT TEXT
     # ========================================================
 
     def extract_text(
         self,
         image_path: str
     ) -> str:
-        """
-        Extract readable text from an image.
-
-        Returns
-        -------
-        str
-            Extracted text or an informative message.
-        """
 
         try:
-            results = self._read_image(image_path)
 
-            return self.process_results(results)
+            results = self._read_image(
+                image_path
+            )
+
+            return self.process_results(
+                results
+            )
 
         except Exception:
             logger.exception(
-                "OCR processing failed for: %s",
+                "OCR processing failed: %s",
                 image_path
             )
 
             return "OCR processing failed."
 
+    # ========================================================
+    # EXTRACT DETAILS
+    # ========================================================
+
     def extract_details(
         self,
         image_path: str
     ) -> List[Dict[str, Any]]:
-        """
-        Extract detailed OCR information.
-
-        Each detected item contains:
-
-        - text
-        - confidence
-        - bounding_box
-        """
 
         try:
-            results = self._read_image(image_path)
+
+            results = self._read_image(
+                image_path
+            )
 
             return self._process_detailed_results(
                 results
@@ -125,27 +107,28 @@ class OCRService:
 
         except Exception:
             logger.exception(
-                "Detailed OCR failed for: %s",
+                "Detailed OCR failed: %s",
                 image_path
             )
 
             return []
 
     # ========================================================
-    # EASY OCR
+    # READ IMAGE
     # ========================================================
 
     def _read_image(
         self,
         image_path: str
     ) -> List[OCRResult]:
-        """
-        Load an image, prepare it, and run EasyOCR.
-        """
 
-        image = self.load_image(image_path)
+        image = self.load_image(
+            image_path
+        )
 
-        prepared_image = self.prepare_image(image)
+        prepared_image = self.prepare_image(
+            image
+        )
 
         results = self.reader.readtext(
             prepared_image,
@@ -153,31 +136,43 @@ class OCRService:
             paragraph=False
         )
 
+        if not isinstance(
+            results,
+            list
+        ):
+            logger.warning(
+                "Unexpected EasyOCR result type: %s",
+                type(results).__name__
+            )
+
+            return []
+
         return results
 
     # ========================================================
-    # IMAGE LOADING
+    # LOAD IMAGE
     # ========================================================
 
     def load_image(
         self,
         image_path: str
     ):
-        """
-        Load an image using OpenCV.
-        """
 
         if not image_path:
             raise ValueError(
                 "Image path cannot be empty."
             )
 
-        if not os.path.isfile(image_path):
+        if not os.path.isfile(
+            image_path
+        ):
             raise FileNotFoundError(
                 f"Image not found: {image_path}"
             )
 
-        image = cv2.imread(image_path)
+        image = cv2.imread(
+            image_path
+        )
 
         if image is None:
             raise ValueError(
@@ -187,18 +182,13 @@ class OCRService:
         return image
 
     # ========================================================
-    # IMAGE PREPARATION
+    # PREPARE IMAGE
     # ========================================================
 
     def prepare_image(
         self,
         image
     ):
-        """
-        Prepare an OpenCV image for EasyOCR.
-
-        Converts BGR images to RGB.
-        """
 
         if image is None:
             raise ValueError(
@@ -214,21 +204,18 @@ class OCRService:
         )
 
     # ========================================================
-    # RESULT PROCESSING
+    # PROCESS RESULTS
     # ========================================================
 
     def process_results(
         self,
         results: Any
     ) -> str:
-        """
-        Convert EasyOCR results into readable text.
-        """
 
         if not results:
             return "No readable text found."
 
-        extracted_text: List[str] = []
+        extracted_text = []
 
         for result in results:
 
@@ -239,34 +226,37 @@ class OCRService:
             if parsed_result is None:
                 continue
 
-            _, text, confidence = parsed_result
+            _, text, confidence = (
+                parsed_result
+            )
 
             if confidence < self.min_confidence:
                 continue
 
-            extracted_text.append(text)
+            extracted_text.append(
+                text
+            )
 
         if not extracted_text:
             return "No readable text found."
 
-        return "\n".join(extracted_text)
+        return "\n".join(
+            extracted_text
+        )
 
     # ========================================================
-    # DETAILED RESULT PROCESSING
+    # DETAILED RESULTS
     # ========================================================
 
     def _process_detailed_results(
         self,
         results: Any
     ) -> List[Dict[str, Any]]:
-        """
-        Convert EasyOCR results into detailed dictionaries.
-        """
 
         if not results:
             return []
 
-        details: List[Dict[str, Any]] = []
+        details = []
 
         for result in results:
 
@@ -277,7 +267,9 @@ class OCRService:
             if parsed_result is None:
                 continue
 
-            bbox, text, confidence = parsed_result
+            bbox, text, confidence = (
+                parsed_result
+            )
 
             if confidence < self.min_confidence:
                 continue
@@ -289,7 +281,7 @@ class OCRService:
                         confidence * 100,
                         2
                     ),
-                    "bounding_box": bbox,
+                    "bounding_box": bbox
                 }
             )
 
@@ -303,14 +295,6 @@ class OCRService:
         self,
         result: Any
     ) -> Optional[OCRResult]:
-        """
-        Safely validate and parse one EasyOCR result.
-
-        Returns
-        -------
-        tuple or None
-            (bounding_box, text, confidence)
-        """
 
         if not isinstance(
             result,
@@ -320,18 +304,27 @@ class OCRService:
                 "Skipping invalid OCR result type: %s",
                 type(result).__name__
             )
+
             return None
 
         if len(result) != 3:
             logger.warning(
-                "Skipping OCR result with unexpected length: %s",
+                "Skipping OCR result with length: %d",
                 len(result)
             )
+
             return None
 
         bbox, text, confidence = result
 
-        if not isinstance(text, str):
+        # ----------------------------------------------------
+        # Validate text
+        # ----------------------------------------------------
+
+        if not isinstance(
+            text,
+            str
+        ):
             return None
 
         text = text.strip()
@@ -339,8 +332,14 @@ class OCRService:
         if not text:
             return None
 
+        # ----------------------------------------------------
+        # Validate confidence
+        # ----------------------------------------------------
+
         try:
-            confidence = float(confidence)
+            confidence = float(
+                confidence
+            )
 
         except (
             TypeError,
@@ -353,6 +352,20 @@ class OCRService:
                 "Invalid OCR confidence: %s",
                 confidence
             )
+
+            return None
+
+        # ----------------------------------------------------
+        # Validate bounding box
+        # ----------------------------------------------------
+
+        if bbox is None:
+            return None
+
+        if not isinstance(
+            bbox,
+            (list, tuple)
+        ):
             return None
 
         return (

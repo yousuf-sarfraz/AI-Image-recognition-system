@@ -4,7 +4,6 @@
 # ============================================================
 
 import logging
-import os
 
 from flask import (
     Blueprint,
@@ -45,14 +44,52 @@ logger = logging.getLogger(__name__)
 
 
 # ============================================================
-# AI Services
+# Service Initialization
 # ============================================================
 
-ocr_service = OCRService()
+def get_ocr_service() -> OCRService:
+    """
+    Return the shared OCR service instance.
 
-object_detector = ObjectDetector()
+    The service is created only when it is first needed.
+    """
 
-image_processor = ImageProcessor()
+    if "ocr_service" not in current_app.extensions:
+        logger.info("Initializing OCR service.")
+
+        current_app.extensions["ocr_service"] = OCRService()
+
+    return current_app.extensions["ocr_service"]
+
+
+def get_object_detector() -> ObjectDetector:
+    """
+    Return the shared object detector instance.
+
+    The YOLO model is created only when it is first needed.
+    """
+
+    if "object_detector" not in current_app.extensions:
+        logger.info("Initializing object detection service.")
+
+        current_app.extensions["object_detector"] = ObjectDetector()
+
+    return current_app.extensions["object_detector"]
+
+
+def get_image_processor() -> ImageProcessor:
+    """
+    Return the shared image processor instance.
+
+    The service is created only when it is first needed.
+    """
+
+    if "image_processor" not in current_app.extensions:
+        logger.info("Initializing image processing service.")
+
+        current_app.extensions["image_processor"] = ImageProcessor()
+
+    return current_app.extensions["image_processor"]
 
 
 # ============================================================
@@ -62,7 +99,7 @@ image_processor = ImageProcessor()
 @main.route("/")
 def home():
     """
-    Display the main ImageAI page.
+    Display the main Image & Text Recognition AI page.
     """
 
     return render_template(
@@ -103,13 +140,13 @@ def upload():
           ↓
         Validate
           ↓
-        Save Image
+        Save Original Image
           ↓
-        Image Preprocessing
+        OCR Preprocessing
           ↓
         OCR
           ↓
-        Object Detection
+        YOLO Object Detection
           ↓
         Results Page
     """
@@ -128,7 +165,6 @@ def upload():
         return redirect(
             url_for("main.home")
         )
-
 
     image = request.files["image"]
 
@@ -167,17 +203,19 @@ def upload():
 
 
     # ========================================================
-    # File Processing
+    # File Variables
     # ========================================================
 
     upload_path = None
     filename = None
+    ocr_image_path = None
+
 
     try:
 
-        # ----------------------------------------------------
-        # Save Uploaded File
-        # ----------------------------------------------------
+        # ====================================================
+        # Save Original Uploaded Image
+        # ====================================================
 
         upload_path, filename = save_uploaded_file(
             image,
@@ -190,26 +228,47 @@ def upload():
         )
 
 
-        # ----------------------------------------------------
-        # Image Preprocessing
-        # ----------------------------------------------------
+        # ====================================================
+        # Get Services
+        # ====================================================
 
-        processed_image = image_processor.process_image(
+        image_processor = get_image_processor()
+        ocr_service = get_ocr_service()
+        object_detector = get_object_detector()
+
+
+        # ====================================================
+        # OCR PREPROCESSING
+        # ====================================================
+        #
+        # OCR gets a specially prepared image.
+        #
+        # This uses:
+        # resize
+        # denoise
+        # contrast enhancement
+        # sharpening
+        # grayscale
+        # thresholding
+        #
+        # ====================================================
+
+        ocr_image_path = image_processor.process_for_ocr(
             upload_path
         )
 
         logger.info(
-            "Image preprocessing completed: %s",
+            "OCR preprocessing completed: %s",
             filename
         )
 
 
-        # ----------------------------------------------------
+        # ====================================================
         # OCR
-        # ----------------------------------------------------
+        # ====================================================
 
         extracted_text = ocr_service.extract_text(
-            processed_image
+            ocr_image_path
         )
 
         logger.info(
@@ -218,12 +277,19 @@ def upload():
         )
 
 
-        # ----------------------------------------------------
-        # Object Detection
-        # ----------------------------------------------------
+        # ====================================================
+        # OBJECT DETECTION
+        # ====================================================
+        #
+        # YOLO receives the ORIGINAL image instead of the
+        # heavily processed OCR image.
+        #
+        # This preserves the original visual information.
+        #
+        # ====================================================
 
         detected_objects = object_detector.detect_objects(
-            processed_image
+            upload_path
         )
 
         logger.info(
@@ -232,13 +298,60 @@ def upload():
         )
 
 
-        # ----------------------------------------------------
+        # ====================================================
         # Processing Complete
-        # ----------------------------------------------------
+        # ====================================================
 
         logger.info(
             "Image processing completed successfully: %s",
             filename
+        )
+
+
+    except FileNotFoundError as error:
+
+        logger.exception(
+            "Required file or model was not found: %s",
+            error
+        )
+
+        if upload_path:
+            delete_file(upload_path)
+
+        if ocr_image_path:
+            delete_file(ocr_image_path)
+
+        flash(
+            "A required file or AI model could not be found.",
+            "error"
+        )
+
+        return redirect(
+            url_for("main.home")
+        )
+
+
+    except ValueError as error:
+
+        logger.exception(
+            "Invalid image or input data: %s",
+            error
+        )
+
+        if upload_path:
+            delete_file(upload_path)
+
+        if ocr_image_path:
+            delete_file(ocr_image_path)
+
+        flash(
+            "The uploaded image could not be processed. "
+            "Please try another image.",
+            "error"
+        )
+
+        return redirect(
+            url_for("main.home")
         )
 
 
@@ -250,17 +363,19 @@ def upload():
             error
         )
 
-
         # ----------------------------------------------------
-        # Cleanup Uploaded File
+        # Cleanup Uploaded Image
         # ----------------------------------------------------
 
         if upload_path:
+            delete_file(upload_path)
 
-            delete_file(
-                upload_path
-            )
+        # ----------------------------------------------------
+        # Cleanup OCR Image
+        # ----------------------------------------------------
 
+        if ocr_image_path:
+            delete_file(ocr_image_path)
 
         flash(
             "Something went wrong while processing "
