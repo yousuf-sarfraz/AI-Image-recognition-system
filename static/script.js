@@ -5,6 +5,10 @@
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    /* ==========================================
+       Elements
+    ========================================== */
+
     const imageInput = document.getElementById("image");
     const previewImage = document.getElementById("preview-image");
     const uploadBox = document.querySelector(".upload-box");
@@ -13,15 +17,152 @@ document.addEventListener("DOMContentLoaded", () => {
     const form = document.querySelector("form");
     const loading = document.getElementById("loading");
 
-    const MAX_SIZE = 16 * 1024 * 1024; // 16 MB
+    /* ==========================================
+       Configuration
+    ========================================== */
 
-    const ALLOWED_TYPES = [
+    const MAX_FILE_SIZE = 16 * 1024 * 1024;
+
+    const ALLOWED_TYPES = new Set([
         "image/jpeg",
-        "image/jpg",
         "image/png",
         "image/bmp",
         "image/webp"
-    ];
+    ]);
+
+
+    /* ==========================================
+       Utility Functions
+    ========================================== */
+
+    function formatFileSize(bytes) {
+
+        if (bytes < 1024) {
+            return `${bytes} B`;
+        }
+
+        if (bytes < 1024 * 1024) {
+            return `${(bytes / 1024).toFixed(1)} KB`;
+        }
+
+        return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+    }
+
+
+    function removeMessage() {
+
+        const existingMessage =
+            document.querySelector(".js-upload-message");
+
+        if (existingMessage) {
+            existingMessage.remove();
+        }
+    }
+
+
+    function showMessage(message, type = "error") {
+
+        removeMessage();
+
+        const messageElement =
+            document.createElement("div");
+
+        messageElement.className =
+            `js-upload-message ${type}`;
+
+        messageElement.setAttribute(
+            "role",
+            "alert"
+        );
+
+        const icon =
+            document.createElement("i");
+
+        icon.className =
+            type === "success"
+                ? "fa-solid fa-circle-check"
+                : "fa-solid fa-circle-exclamation";
+
+        const text =
+            document.createElement("span");
+
+        text.textContent = message;
+
+        messageElement.appendChild(icon);
+        messageElement.appendChild(text);
+
+        if (uploadBox) {
+
+            uploadBox.insertAdjacentElement(
+                "afterend",
+                messageElement
+            );
+
+        }
+
+        setTimeout(() => {
+
+            if (messageElement.isConnected) {
+                messageElement.remove();
+            }
+
+        }, 5000);
+    }
+
+
+    /* ==========================================
+       Update Upload Title
+    ========================================== */
+
+    function updateUploadTitle(titleText) {
+
+        if (!uploadLabel) {
+            return;
+        }
+
+        const title =
+            uploadLabel.querySelector("h3");
+
+        if (title) {
+            title.textContent = titleText;
+        }
+    }
+
+
+    /* ==========================================
+       Update File Information
+    ========================================== */
+
+    function updateFileInformation(file) {
+
+        if (!fileName || !file) {
+            return;
+        }
+
+        fileName.textContent = "";
+
+        const icon =
+            document.createElement("i");
+
+        icon.className =
+            "fa-solid fa-file-image";
+
+        const name =
+            document.createTextNode(
+                ` ${file.name} `
+            );
+
+        const size =
+            document.createElement("span");
+
+        size.textContent =
+            `(${formatFileSize(file.size)})`;
+
+        fileName.appendChild(icon);
+        fileName.appendChild(name);
+        fileName.appendChild(size);
+    }
+
 
     /* ==========================================
        Image Preview
@@ -29,30 +170,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function previewFile(file) {
 
-        if (!file) return;
+        if (!file || !previewImage) {
+            return;
+        }
 
-        const reader = new FileReader();
+        const reader =
+            new FileReader();
 
-        reader.onload = (e) => {
+        reader.onload = (event) => {
 
-            previewImage.src = e.target.result;
-            previewImage.style.display = "block";
+            if (!event.target?.result) {
+                showMessage(
+                    "Unable to preview this image."
+                );
 
+                return;
+            }
+
+            previewImage.src =
+                event.target.result;
+
+            previewImage.style.display =
+                "block";
+        };
+
+        reader.onerror = () => {
+
+            showMessage(
+                "Unable to preview this image. Please try another file."
+            );
         };
 
         reader.readAsDataURL(file);
 
-        const title = uploadLabel.querySelector("h3");
+        updateUploadTitle(
+            "Image Selected"
+        );
 
-        if (title) {
-            title.textContent = "Image Selected";
-        }
-
-        if (fileName) {
-            fileName.textContent = file.name;
-        }
-
+        updateFileInformation(file);
     }
+
 
     /* ==========================================
        Reset Preview
@@ -60,22 +217,51 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function resetPreview() {
 
-        imageInput.value = "";
+        if (imageInput) {
+            imageInput.value = "";
+        }
 
-        previewImage.src = "";
-        previewImage.style.display = "none";
+        if (previewImage) {
+
+            previewImage.removeAttribute("src");
+
+            previewImage.style.display =
+                "none";
+        }
 
         if (fileName) {
-            fileName.textContent = "No file selected";
+
+            fileName.textContent = "";
+
+            const icon =
+                document.createElement("i");
+
+            icon.className =
+                "fa-solid fa-image";
+
+            fileName.appendChild(icon);
+
+            fileName.appendChild(
+                document.createTextNode(
+                    " No file selected"
+                )
+            );
         }
 
-        const title = uploadLabel.querySelector("h3");
+        updateUploadTitle(
+            "Select an Image"
+        );
 
-        if (title) {
-            title.textContent = "Select an Image";
+        if (uploadBox) {
+
+            uploadBox.classList.remove(
+                "drag-active"
+            );
         }
 
+        removeMessage();
     }
+
 
     /* ==========================================
        Validate Image
@@ -83,33 +269,55 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function validateImage(file) {
 
-        if (!ALLOWED_TYPES.includes(file.type)) {
+        if (!file) {
 
-            alert(
-                "Only JPG, JPEG, PNG, BMP and WEBP images are allowed."
+            showMessage(
+                "Please select an image first."
             );
 
-            resetPreview();
-
             return false;
-
         }
 
-        if (file.size > MAX_SIZE) {
 
-            alert(
-                "Maximum allowed file size is 16 MB."
+        /* File Type */
+
+        if (!ALLOWED_TYPES.has(file.type)) {
+
+            showMessage(
+                "Invalid file type. Please select JPG, JPEG, PNG, BMP or WEBP."
             );
 
-            resetPreview();
+            return false;
+        }
+
+
+        /* File Size */
+
+        if (file.size > MAX_FILE_SIZE) {
+
+            showMessage(
+                "The selected image is larger than the 16 MB limit."
+            );
 
             return false;
-
         }
+
+
+        /* Empty File */
+
+        if (file.size === 0) {
+
+            showMessage(
+                "The selected file is empty."
+            );
+
+            return false;
+        }
+
 
         return true;
-
     }
+
 
     /* ==========================================
        File Input
@@ -117,25 +325,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (imageInput) {
 
-        imageInput.addEventListener("change", function () {
+        imageInput.addEventListener(
+            "change",
+            () => {
 
-            const file = this.files[0];
+                const file =
+                    imageInput.files?.[0];
 
-            if (!file) {
+                if (!file) {
 
-                resetPreview();
+                    resetPreview();
 
-                return;
+                    return;
+                }
 
+                if (!validateImage(file)) {
+
+                    resetPreview();
+
+                    return;
+                }
+
+                previewFile(file);
             }
-
-            if (!validateImage(file)) return;
-
-            previewFile(file);
-
-        });
-
+        );
     }
+
 
     /* ==========================================
        Drag & Drop
@@ -143,45 +358,114 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (uploadBox) {
 
-        ["dragenter", "dragover"].forEach(event => {
+        uploadBox.addEventListener(
+            "dragenter",
+            (event) => {
 
-            uploadBox.addEventListener(event, (e) => {
+                event.preventDefault();
+                event.stopPropagation();
 
-                e.preventDefault();
+                uploadBox.classList.add(
+                    "drag-active"
+                );
+            }
+        );
 
-                uploadBox.classList.add("drag-active");
 
-            });
+        uploadBox.addEventListener(
+            "dragover",
+            (event) => {
 
-        });
+                event.preventDefault();
+                event.stopPropagation();
 
-        ["dragleave", "dragend", "drop"].forEach(event => {
+                uploadBox.classList.add(
+                    "drag-active"
+                );
+            }
+        );
 
-            uploadBox.addEventListener(event, (e) => {
 
-                e.preventDefault();
+        uploadBox.addEventListener(
+            "dragleave",
+            (event) => {
 
-                uploadBox.classList.remove("drag-active");
+                event.preventDefault();
+                event.stopPropagation();
 
-            });
+                /*
+                 * Only remove the active state when
+                 * the pointer actually leaves the box.
+                 */
 
-        });
+                if (
+                    !uploadBox.contains(
+                        event.relatedTarget
+                    )
+                ) {
 
-        uploadBox.addEventListener("drop", (e) => {
+                    uploadBox.classList.remove(
+                        "drag-active"
+                    );
+                }
+            }
+        );
 
-            const file = e.dataTransfer.files[0];
 
-            if (!file) return;
+        uploadBox.addEventListener(
+            "drop",
+            (event) => {
 
-            if (!validateImage(file)) return;
+                event.preventDefault();
+                event.stopPropagation();
 
-            imageInput.files = e.dataTransfer.files;
+                uploadBox.classList.remove(
+                    "drag-active"
+                );
 
-            previewFile(file);
+                const file =
+                    event.dataTransfer?.files?.[0];
 
-        });
+                if (!file) {
+                    return;
+                }
 
+                if (!validateImage(file)) {
+                    return;
+                }
+
+
+                /*
+                 * Assign dropped file to the
+                 * actual file input.
+                 */
+
+                if (imageInput) {
+
+                    try {
+
+                        const dataTransfer =
+                            new DataTransfer();
+
+                        dataTransfer.items.add(file);
+
+                        imageInput.files =
+                            dataTransfer.files;
+
+                    } catch (error) {
+
+                        console.warn(
+                            "Unable to assign dropped file to input:",
+                            error
+                        );
+                    }
+                }
+
+                previewFile(file);
+            }
+        );
     }
+
 
     /* ==========================================
        Form Submission
@@ -189,39 +473,131 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (form) {
 
-        form.addEventListener("submit", (e) => {
+        form.addEventListener(
+            "submit",
+            (event) => {
 
-            if (!imageInput.files.length) {
+                if (!imageInput) {
 
-                e.preventDefault();
+                    event.preventDefault();
 
-                alert("Please select an image first.");
+                    showMessage(
+                        "Image input could not be found."
+                    );
 
-                return;
+                    return;
+                }
 
+
+                const file =
+                    imageInput.files?.[0];
+
+
+                /* Check file */
+
+                if (!file) {
+
+                    event.preventDefault();
+
+                    showMessage(
+                        "Please select an image before analyzing."
+                    );
+
+                    return;
+                }
+
+
+                /* Final validation */
+
+                if (!validateImage(file)) {
+
+                    event.preventDefault();
+
+                    return;
+                }
+
+
+                /* Prevent double submission */
+
+                if (
+                    form.dataset.submitting === "true"
+                ) {
+
+                    event.preventDefault();
+
+                    return;
+                }
+
+                form.dataset.submitting = "true";
+
+
+                /* Disable submit button */
+
+                const button =
+                    form.querySelector(
+                        "button[type='submit']"
+                    );
+
+                if (button) {
+
+                    button.disabled = true;
+
+                    button.setAttribute(
+                        "aria-disabled",
+                        "true"
+                    );
+
+                    button.innerHTML = `
+                        <i class="fa-solid fa-spinner fa-spin"></i>
+                        Analyzing...
+                    `;
+                }
+
+
+                /* Show loading state */
+
+                if (loading) {
+
+                    loading.style.display =
+                        "block";
+                }
             }
+        );
+    }
 
-            const button = form.querySelector("button");
 
-            if (button) {
+    /* ==========================================
+       Keyboard Accessibility
+    ========================================== */
 
-                button.disabled = true;
+    if (uploadBox && imageInput) {
 
-                button.innerHTML = `
-                    <i class="fa-solid fa-spinner fa-spin"></i>
-                    Analyzing...
-                `;
+        uploadBox.addEventListener(
+            "keydown",
+            (event) => {
 
+                if (
+                    event.key === "Enter" ||
+                    event.key === " "
+                ) {
+
+                    event.preventDefault();
+
+                    imageInput.click();
+                }
             }
+        );
+    }
 
-            if (loading) {
 
-                loading.style.display = "block";
+    /* ==========================================
+       Initial State
+    ========================================== */
 
-            }
+    if (previewImage) {
 
-        });
-
+        previewImage.style.display =
+            "none";
     }
 
 });

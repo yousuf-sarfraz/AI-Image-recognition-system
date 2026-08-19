@@ -1,3 +1,4 @@
+```html id="x7k2qp"
 {% extends "layout.html" %}
 
 {% block title %}
@@ -8,19 +9,46 @@ About | Image & Text Recognition AI
 
 <!-- ================= Hero Section ================= -->
 
-<section class="hero">
+<section class="hero about-hero">
 
     <div class="container">
 
         <div class="hero-content">
 
-            <h1>About Image & Text Recognition AI</h1>
+            <div class="hero-badge">
+                <i class="fa-solid fa-circle-info"></i>
+                ABOUT IMAGEAI
+            </div>
+
+            <h1>
+                Intelligent Image
+                <span>Recognition with AI</span>
+            </h1>
 
             <p>
-                An AI-powered web application that combines Object Detection
-                and Optical Character Recognition (OCR) to analyze images
-                quickly and accurately.
+                ImageAI combines computer vision, object detection,
+                image preprocessing, and Optical Character Recognition
+                to turn images into useful information.
             </p>
+
+            <div class="hero-highlights">
+
+                <div class="hero-highlight">
+                    <i class="fa-solid fa-bullseye"></i>
+                    <span>Object Detection</span>
+                </div>
+
+                <div class="hero-highlight">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <span>OCR Recognition</span>
+                </div>
+
+                <div class="hero-highlight">
+                    <i class="fa-solid fa-flask"></i>
+                    <span>Computer Vision</span>
+                </div>
+
+            </div>
 
         </div>
 
@@ -28,115 +56,200 @@ About | Image & Text Recognition AI
 
 </section>
 
-<!-- ================= About Project ================= -->
+
+<!-- ================= Project Overview ================= -->
 
 <section class="about-section">
 
     <div class="container">
 
-        <div class="about-card">
+        <div class="about-card about-overview-card">
 
-            <h2>Project Overview</h2>
+            <div class="about-card-icon">
+                <i class="fa-solid fa-robot"></i>
+            </div>
 
-            <p>
-                Image & Text Recognition AI is a Flask-based web application
-                that enables users to upload images for intelligent analysis.
-                The application identifies objects using the YOLOv8 deep
-                learning model and extracts readable text using Optical
-                Character Recognition (OCR).
-            </p>
+            <div class="about-card-content">
 
-            <p>
-                This project demonstrates how Artificial Intelligence,
-                Computer Vision, and OCR can be integrated into a modern
-                web application to solve real-world image recognition tasks.
-            </p>
+                <span class="section-label">
+                    <i class="fa-solid fa-layer-group"></i>
+                    PROJECT OVERVIEW
+                </span>
+
+                <h2>
+                    What is ImageAI?
+                </h2>
+
+                <p>
+                    Image & Text Recognition AI is a Flask-based web
+                    application designed to analyze uploaded images
+                    using Artificial Intelligence and Computer Vision.
+                </p>
+
+                <p>
+                    The application uses the YOLOv8 deep learning model
+                    to detect objects and Optical Character Recognition
+                    (OCR) to extract readable text from images.
+                </p>
+
+                <p>
+                    The project demonstrates how multiple AI technologies
+                    can be combined with a web application to solve
+                    practical image analysis tasks.
+                </p>
+
+            </div>
 
         </div>
 
     </div>
 
 </section>
+
 
 <!-- ================= Technologies ================= -->
 
-<section class="features">
+<section class="features technologies-section">
 
     <div class="container">
 
-        <h2>Technologies Used</h2>
+        <div class="section-heading">
+
+            <span class="section-label">
+                <i class="fa-solid fa-code"></i>
+                TECHNOLOGY STACK
+            </span>
+
+            <h2>
+                Technologies Used
+            </h2>
+
+            <p>
+                The application combines several technologies to
+                provide image analysis and recognition capabilities.
+            </p>
+
+        </div>
+
 
         <div class="feature-grid">
 
+
+            <!-- Python -->
+
             <div class="feature-card">
 
-                <i class="fa-brands fa-python"></i>
+                <div class="feature-icon">
+                    <i class="fa-brands fa-python"></i>
+                </div>
 
-                <h3>Python</h3>
+                <h3>
+                    Python
+                </h3>
 
                 <p>
-                    Core programming language used to build the application.
+                    The primary programming language used to build
+                    the application's AI and backend components.
                 </p>
 
             </div>
 
+
+            <!-- Flask -->
+
             <div class="feature-card">
 
-                <i class="fa-solid fa-server"></i>
+                <div class="feature-icon">
+                    <i class="fa-solid fa-server"></i>
+                </div>
 
-                <h3>Flask</h3>
+                <h3>
+                    Flask
+                </h3>
 
                 <p>
-                    Lightweight web framework used for backend development.
+                    A lightweight Python web framework used to
+                    connect the backend AI services with the web interface.
                 </p>
 
             </div>
 
+
+            <!-- YOLOv8 -->
+
             <div class="feature-card">
 
-                <i class="fa-solid fa-eye"></i>
+                <div class="feature-icon">
+                    <i class="fa-solid fa-bullseye"></i>
+                </div>
 
-                <h3>YOLOv8</h3>
+                <h3>
+                    YOLOv8
+                </h3>
 
                 <p>
-                    Detects multiple real-world objects with high accuracy.
+                    A deep learning model used for detecting
+                    objects present in uploaded images.
                 </p>
 
             </div>
 
+
+            <!-- OCR -->
+
             <div class="feature-card">
 
-                <i class="fa-solid fa-file-lines"></i>
+                <div class="feature-icon">
+                    <i class="fa-solid fa-file-lines"></i>
+                </div>
 
-                <h3>OCR</h3>
+                <h3>
+                    OCR
+                </h3>
 
                 <p>
-                    Extracts printed text from images using Optical Character
-                    Recognition.
+                    Optical Character Recognition is used to
+                    extract readable text from images.
                 </p>
 
             </div>
 
+
+            <!-- OpenCV -->
+
             <div class="feature-card">
 
-                <i class="fa-solid fa-camera"></i>
+                <div class="feature-icon">
+                    <i class="fa-solid fa-camera"></i>
+                </div>
 
-                <h3>OpenCV</h3>
+                <h3>
+                    OpenCV
+                </h3>
 
                 <p>
-                    Performs image preprocessing before AI analysis.
+                    Used for image processing and preprocessing
+                    before AI analysis.
                 </p>
 
             </div>
 
+
+            <!-- Frontend -->
+
             <div class="feature-card">
 
-                <i class="fa-solid fa-code"></i>
+                <div class="feature-icon">
+                    <i class="fa-solid fa-code"></i>
+                </div>
 
-                <h3>HTML • CSS • JavaScript</h3>
+                <h3>
+                    HTML, CSS & JavaScript
+                </h3>
 
                 <p>
-                    Builds a modern, responsive and interactive user interface.
+                    Used to build the interactive and responsive
+                    frontend interface.
                 </p>
 
             </div>
@@ -146,30 +259,154 @@ About | Image & Text Recognition AI
     </div>
 
 </section>
+
 
 <!-- ================= Workflow ================= -->
 
-<section class="about-section">
+<section class="about-section workflow-section">
 
     <div class="container">
 
-        <div class="about-card">
+        <div class="section-heading">
 
-            <h2>How It Works</h2>
+            <span class="section-label">
+                <i class="fa-solid fa-gears"></i>
+                WORKFLOW
+            </span>
 
-            <ol>
+            <h2>
+                How It Works
+            </h2>
 
-                <li>Upload an image from your computer.</li>
+            <p>
+                From image upload to AI-powered results,
+                the application follows a simple processing pipeline.
+            </p>
 
-                <li>The image is preprocessed for better accuracy.</li>
+        </div>
 
-                <li>YOLOv8 detects objects present in the image.</li>
 
-                <li>OCR extracts readable text from the image.</li>
+        <div class="steps">
 
-                <li>The application displays detected objects and extracted text.</li>
 
-            </ol>
+            <!-- Step 01 -->
+
+            <div class="step">
+
+                <div class="step-number">
+                    01
+                </div>
+
+                <div class="step-content">
+
+                    <h3>
+                        Upload Image
+                    </h3>
+
+                    <p>
+                        The user selects an image from their
+                        computer using the upload interface.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Step 02 -->
+
+            <div class="step">
+
+                <div class="step-number">
+                    02
+                </div>
+
+                <div class="step-content">
+
+                    <h3>
+                        Preprocess
+                    </h3>
+
+                    <p>
+                        The image is processed and prepared
+                        for the recognition pipeline.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Step 03 -->
+
+            <div class="step">
+
+                <div class="step-number">
+                    03
+                </div>
+
+                <div class="step-content">
+
+                    <h3>
+                        Detect Objects
+                    </h3>
+
+                    <p>
+                        YOLOv8 analyzes the image and identifies
+                        objects detected by the model.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Step 04 -->
+
+            <div class="step">
+
+                <div class="step-number">
+                    04
+                </div>
+
+                <div class="step-content">
+
+                    <h3>
+                        Extract Text
+                    </h3>
+
+                    <p>
+                        OCR analyzes the image to identify
+                        and extract readable text.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- Step 05 -->
+
+            <div class="step">
+
+                <div class="step-number">
+                    05
+                </div>
+
+                <div class="step-content">
+
+                    <h3>
+                        Display Results
+                    </h3>
+
+                    <p>
+                        The detected objects and extracted text
+                        are presented to the user.
+                    </p>
+
+                </div>
+
+            </div>
 
         </div>
 
@@ -177,60 +414,149 @@ About | Image & Text Recognition AI
 
 </section>
 
-<!-- ================= Features ================= -->
+
+<!-- ================= Key Features ================= -->
 
 <section class="features">
 
     <div class="container">
 
-        <h2>Key Features</h2>
+        <div class="section-heading">
+
+            <span class="section-label">
+                <i class="fa-solid fa-star"></i>
+                CAPABILITIES
+            </span>
+
+            <h2>
+                Key Features
+            </h2>
+
+            <p>
+                Core capabilities currently available in the application.
+            </p>
+
+        </div>
+
 
         <div class="feature-grid">
 
+
+            <!-- Image Upload -->
+
             <div class="feature-card">
 
-                <i class="fa-solid fa-image"></i>
+                <div class="feature-icon">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
 
-                <h3>Image Upload</h3>
+                <h3>
+                    Image Upload
+                </h3>
 
                 <p>
-                    Upload images securely for AI-powered analysis.
+                    Upload supported image formats for
+                    AI-powered analysis.
                 </p>
 
             </div>
 
+
+            <!-- Object Detection -->
+
             <div class="feature-card">
 
-                <i class="fa-solid fa-object-group"></i>
+                <div class="feature-icon">
+                    <i class="fa-solid fa-object-group"></i>
+                </div>
 
-                <h3>Object Detection</h3>
+                <h3>
+                    Object Detection
+                </h3>
 
                 <p>
-                    Identify multiple real-world objects automatically.
+                    Detect multiple objects present in an
+                    uploaded image using YOLOv8.
                 </p>
 
             </div>
 
+
+            <!-- Text Recognition -->
+
             <div class="feature-card">
 
-                <i class="fa-solid fa-font"></i>
+                <div class="feature-icon">
+                    <i class="fa-solid fa-font"></i>
+                </div>
 
-                <h3>Text Recognition</h3>
+                <h3>
+                    Text Recognition
+                </h3>
 
                 <p>
-                    Extract printed text from documents, signs and images.
+                    Extract readable text from images using
+                    Optical Character Recognition.
                 </p>
 
             </div>
 
+
+            <!-- Image Processing -->
+
             <div class="feature-card">
 
-                <i class="fa-solid fa-bolt"></i>
+                <div class="feature-icon">
+                    <i class="fa-solid fa-sliders"></i>
+                </div>
 
-                <h3>Fast Processing</h3>
+                <h3>
+                    Image Processing
+                </h3>
 
                 <p>
-                    AI generates results within a few seconds.
+                    Process images before recognition to
+                    prepare them for AI analysis.
+                </p>
+
+            </div>
+
+
+            <!-- Fast Processing -->
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+
+                <h3>
+                    Fast Processing
+                </h3>
+
+                <p>
+                    Analyze images through an automated
+                    AI processing pipeline.
+                </p>
+
+            </div>
+
+
+            <!-- Web Interface -->
+
+            <div class="feature-card">
+
+                <div class="feature-icon">
+                    <i class="fa-solid fa-window-maximize"></i>
+                </div>
+
+                <h3>
+                    Web Interface
+                </h3>
+
+                <p>
+                    Access the recognition system through
+                    a simple browser-based interface.
                 </p>
 
             </div>
@@ -241,29 +567,65 @@ About | Image & Text Recognition AI
 
 </section>
 
+
 <!-- ================= Future Improvements ================= -->
 
-<section class="about-section">
+<section class="about-section future-section">
 
     <div class="container">
 
-        <div class="about-card">
+        <div class="about-card future-card">
 
-            <h2>Future Improvements</h2>
+            <div class="about-card-icon">
+                <i class="fa-solid fa-rocket"></i>
+            </div>
 
-            <ul>
+            <div class="about-card-content">
 
-                <li>Support handwritten text recognition.</li>
+                <span class="section-label">
+                    <i class="fa-solid fa-arrow-trend-up"></i>
+                    ROADMAP
+                </span>
 
-                <li>Multiple language OCR support.</li>
+                <h2>
+                    Future Improvements
+                </h2>
 
-                <li>Real-time webcam detection.</li>
+                <p>
+                    The project can be extended with additional
+                    computer vision and AI capabilities in future versions.
+                </p>
 
-                <li>Export recognition results as PDF.</li>
+                <ul class="future-list">
 
-                <li>Cloud deployment for public access.</li>
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        <span>Support handwritten text recognition.</span>
+                    </li>
 
-            </ul>
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        <span>Support multiple OCR languages.</span>
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        <span>Add real-time webcam detection.</span>
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        <span>Export recognition results as PDF.</span>
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        <span>Deploy the application to the cloud.</span>
+                    </li>
+
+                </ul>
+
+            </div>
 
         </div>
 
@@ -272,3 +634,4 @@ About | Image & Text Recognition AI
 </section>
 
 {% endblock %}
+```

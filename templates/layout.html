@@ -3,18 +3,43 @@
 
 <head>
 
+    <!-- =====================================================
+         BASIC META
+    ====================================================== -->
+
     <meta charset="UTF-8">
 
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
 
+    <meta name="description"
+          content="{% block meta_description %}AI-powered image analysis using YOLOv8 object detection and OCR text recognition.{% endblock %}">
+
+    <meta name="author"
+          content="ImageAI">
+
+    <meta name="theme-color"
+          content="#2563eb">
+
+    <meta name="robots"
+          content="index, follow">
+
+
+    <!-- =====================================================
+         PAGE TITLE
+    ====================================================== -->
+
     <title>
         {% block title %}
-        Image & Text Recognition AI
+            Image & Text Recognition AI
         {% endblock %}
     </title>
 
-    <!-- Google Font -->
+
+    <!-- =====================================================
+         GOOGLE FONTS
+    ====================================================== -->
+
     <link rel="preconnect"
           href="https://fonts.googleapis.com">
 
@@ -22,54 +47,174 @@
           href="https://fonts.gstatic.com"
           crossorigin>
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-          rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-    <!-- Main CSS -->
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
+    <!-- =====================================================
+         FONT AWESOME
+    ====================================================== -->
 
-    <!-- Responsive CSS -->
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/responsive.css') }}">
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+
+    <!-- =====================================================
+         MAIN STYLESHEET
+    ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}">
+
+
+    <!-- =====================================================
+         RESPONSIVE STYLESHEET
+    ====================================================== -->
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/responsive.css') }}">
+
+
+    <!-- =====================================================
+         PAGE-SPECIFIC CSS
+    ====================================================== -->
+
+    {% block extra_css %}
+    {% endblock %}
 
 </head>
 
+
 <body>
 
-    <!-- ================= Header ================= -->
 
-    <header>
+    <!-- =====================================================
+         ACCESSIBILITY
+    ====================================================== -->
+
+    <a
+        href="#main-content"
+        class="sr-only">
+
+        Skip to main content
+
+    </a>
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header class="site-header">
 
         <div class="container">
 
-            <nav>
+            <nav
+                class="navbar"
+                aria-label="Main navigation">
 
-                <a href="{{ url_for('main.home') }}" class="logo">
 
-                    Image<span>AI</span>
+                <!-- ================= LOGO ================= -->
+
+                <a
+                    href="{{ url_for('main.home') }}"
+                    class="logo"
+                    aria-label="ImageAI Home">
+
+                    <span
+                        class="logo-icon"
+                        aria-hidden="true">
+
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+
+                    </span>
+
+                    <span>
+                        Image<span class="logo-highlight">AI</span>
+                    </span>
 
                 </a>
 
-                <ul>
+
+                <!-- ================= NAVIGATION ================= -->
+
+                <ul class="nav-links">
+
+
+                    <!-- Home -->
 
                     <li>
 
-                        <a href="{{ url_for('main.home') }}">Home</a>
+                        <a
+                            href="{{ url_for('main.home') }}"
+                            class="{% if request.endpoint == 'main.home' %}active{% endif %}"
+                            {% if request.endpoint == 'main.home' %}
+                                aria-current="page"
+                            {% endif %}>
+
+                            <i
+                                class="fa-solid fa-house"
+                                aria-hidden="true">
+                            </i>
+
+                            <span>
+                                Home
+                            </span>
+
+                        </a>
 
                     </li>
+
+
+                    <!-- About -->
 
                     <li>
 
-                        <a href="{{ url_for('main.about') }}">About</a>
+                        <a
+                            href="{{ url_for('main.about') }}"
+                            class="{% if request.endpoint == 'main.about' %}active{% endif %}"
+                            {% if request.endpoint == 'main.about' %}
+                                aria-current="page"
+                            {% endif %}>
+
+                            <i
+                                class="fa-solid fa-circle-info"
+                                aria-hidden="true">
+                            </i>
+
+                            <span>
+                                About
+                            </span>
+
+                        </a>
 
                     </li>
+
 
                 </ul>
+
+
+                <!-- ================= AI STATUS ================= -->
+
+                <div
+                    class="ai-status"
+                    role="status"
+                    aria-label="AI system status">
+
+                    <span
+                        class="status-dot"
+                        aria-hidden="true">
+                    </span>
+
+                    <span>
+                        AI Ready
+                    </span>
+
+                </div>
 
             </nav>
 
@@ -77,54 +222,284 @@
 
     </header>
 
-    <!-- Flash Messages -->
 
-    {% with messages = get_flashed_messages() %}
+    <!-- =====================================================
+         FLASH MESSAGES
+    ====================================================== -->
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
         {% if messages %}
-            <div class="flash-container">
 
-                {% for message in messages %}
+            <div
+                class="flash-container"
+                aria-live="polite">
 
-                    <div class="flash-message">
+                <div class="container">
 
-                        {{ message }}
+                    {% for category, message in messages %}
 
-                    </div>
+                        <div
+                            class="flash-message {% if category %}flash-{{ category }}{% endif %}"
+                            role="alert">
 
-                {% endfor %}
+
+                            <!-- Message Icon -->
+
+                            <i
+                                class="fa-solid
+                                {% if category == 'error' %}
+                                    fa-circle-exclamation
+                                {% elif category == 'success' %}
+                                    fa-circle-check
+                                {% elif category == 'warning' %}
+                                    fa-triangle-exclamation
+                                {% else %}
+                                    fa-circle-info
+                                {% endif %}"
+                                aria-hidden="true">
+                            </i>
+
+
+                            <!-- Message -->
+
+                            <span>
+                                {{ message }}
+                            </span>
+
+
+                            <!-- Close Button -->
+
+                            <button
+                                type="button"
+                                class="flash-close"
+                                aria-label="Close message">
+
+                                <i
+                                    class="fa-solid fa-xmark"
+                                    aria-hidden="true">
+                                </i>
+
+                            </button>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
 
             </div>
+
         {% endif %}
+
     {% endwith %}
 
-    <!-- ================= Main Content ================= -->
 
-    <main>
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main
+        id="main-content"
+        tabindex="-1">
 
         {% block content %}
+
         {% endblock %}
 
     </main>
 
-    <!-- ================= Footer ================= -->
 
-    <footer>
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="site-footer">
 
         <div class="container">
 
-            <p>
+            <div class="footer-content">
 
-                © 2026 Image & Text Recognition AI | Developed with Flask & AI
 
-            </p>
+                <!-- ================= BRAND ================= -->
+
+                <div class="footer-brand">
+
+                    <a
+                        href="{{ url_for('main.home') }}"
+                        class="footer-logo"
+                        aria-label="ImageAI Home">
+
+                        <i
+                            class="fa-solid fa-wand-magic-sparkles"
+                            aria-hidden="true">
+                        </i>
+
+                        <span>
+                            Image<span>AI</span>
+                        </span>
+
+                    </a>
+
+
+                    <p>
+                        Intelligent image analysis powered by
+                        YOLOv8 object detection and OCR
+                        text recognition.
+                    </p>
+
+                </div>
+
+
+                <!-- ================= NAVIGATION ================= -->
+
+                <div class="footer-links">
+
+                    <h3>
+                        Navigation
+                    </h3>
+
+
+                    <a href="{{ url_for('main.home') }}">
+
+                        <i
+                            class="fa-solid fa-house"
+                            aria-hidden="true">
+                        </i>
+
+                        <span>
+                            Home
+                        </span>
+
+                    </a>
+
+
+                    <a href="{{ url_for('main.about') }}">
+
+                        <i
+                            class="fa-solid fa-circle-info"
+                            aria-hidden="true">
+                        </i>
+
+                        <span>
+                            About
+                        </span>
+
+                    </a>
+
+                </div>
+
+
+                <!-- ================= TECHNOLOGY ================= -->
+
+                <div class="footer-tech">
+
+                    <h3>
+                        Technology
+                    </h3>
+
+
+                    <span>
+
+                        <i
+                            class="fa-solid fa-bullseye"
+                            aria-hidden="true">
+                        </i>
+
+                        YOLOv8 Object Detection
+
+                    </span>
+
+
+                    <span>
+
+                        <i
+                            class="fa-solid fa-file-lines"
+                            aria-hidden="true">
+                        </i>
+
+                        OCR Text Recognition
+
+                    </span>
+
+
+                    <span>
+
+                        <i
+                            class="fa-solid fa-image"
+                            aria-hidden="true">
+                        </i>
+
+                        OpenCV Image Processing
+
+                    </span>
+
+
+                    <span>
+
+                        <i
+                            class="fa-solid fa-flask"
+                            aria-hidden="true">
+                        </i>
+
+                        Flask Backend
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 FOOTER BOTTOM
+            ================================================== -->
+
+            <div class="footer-bottom">
+
+
+                <p>
+                    © 2026 ImageAI. All rights reserved.
+                </p>
+
+
+                <p>
+
+                    Built with
+
+                    <i
+                        class="fa-solid fa-heart"
+                        aria-hidden="true">
+                    </i>
+
+                    Flask &amp; AI
+
+                </p>
+
+            </div>
 
         </div>
 
     </footer>
 
-    <!-- JavaScript -->
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script
+        src="{{ url_for('static', filename='script.js') }}"
+        defer>
+    </script>
+
+
+    <!-- =====================================================
+         PAGE-SPECIFIC JAVASCRIPT
+    ====================================================== -->
+
+    {% block extra_js %}
+    {% endblock %}
+
 
 </body>
 

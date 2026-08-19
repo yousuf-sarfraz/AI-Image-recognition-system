@@ -4,25 +4,89 @@
 Home | Image & Text Recognition AI
 {% endblock %}
 
+
 {% block content %}
 
-<!-- ================= Hero Section ================= -->
+<!-- =========================================================
+     HERO SECTION
+========================================================= -->
 
-<section class="hero">
+<section class="hero" aria-labelledby="hero-title">
 
     <div class="container">
 
         <div class="hero-content">
 
-            <h1>
-                AI-Powered Image & Text Recognition
+            <!-- AI Badge -->
+            <div class="hero-badge">
+                <i
+                    class="fa-solid fa-microchip"
+                    aria-hidden="true">
+                </i>
+
+                <span>AI-POWERED IMAGE ANALYSIS</span>
+            </div>
+
+
+            <!-- Main Heading -->
+            <h1 id="hero-title">
+
+                Understand Images with
+
+                <span>AI</span>
+
             </h1>
 
+
+            <!-- Description -->
             <p>
-                Upload an image and let Artificial Intelligence detect
-                real-world objects and extract text instantly using
-                YOLOv8 Object Detection and OCR technology.
+                Upload an image and let AI detect objects,
+                recognize visible text, and turn visual content
+                into useful information.
             </p>
+
+
+            <!-- Hero Highlights -->
+            <div
+                class="hero-highlights"
+                aria-label="Application capabilities">
+
+                <div class="hero-highlight">
+
+                    <i
+                        class="fa-solid fa-crosshairs"
+                        aria-hidden="true">
+                    </i>
+
+                    <span>YOLOv8 Detection</span>
+
+                </div>
+
+
+                <div class="hero-highlight">
+
+                    <i
+                        class="fa-solid fa-file-lines"
+                        aria-hidden="true">
+                    </i>
+
+                    <span>EasyOCR</span>
+
+                </div>
+
+
+                <div class="hero-highlight">
+
+                    <i
+                        class="fa-solid fa-bolt"
+                        aria-hidden="true">
+                    </i>
+
+                    <span>Fast Analysis</span>
+
+                </div>
+
+            </div>
 
         </div>
 
@@ -30,105 +94,296 @@ Home | Image & Text Recognition AI
 
 </section>
 
-<!-- ================= Upload Section ================= -->
 
-<section class="upload-section">
+
+<!-- =========================================================
+     UPLOAD / ANALYSIS SECTION
+========================================================= -->
+
+<section
+    class="upload-section"
+    id="analyze"
+    aria-labelledby="upload-title">
 
     <div class="container">
 
-        <div class="upload-card">
+        <div class="upload-container">
 
-            <h2>Upload Your Image</h2>
+            <div class="upload-card">
 
-            <p class="upload-info">
-                Supported Formats:
-                <strong>JPG, JPEG, PNG, BMP, WEBP</strong>
-                <br>
-                Maximum File Size:
-                <strong>16 MB</strong>
-            </p>
 
-            <form
-                action="{{ url_for('main.upload') }}"
-                method="POST"
-                enctype="multipart/form-data">
+                <!-- Section Heading -->
 
-                <!-- Upload Box -->
+                <div class="section-heading">
 
-                <div class="upload-box">
+                    <span class="section-label">
 
-                    <input
-                        type="file"
-                        id="image"
-                        name="image"
-                        accept="image/*"
-                        aria-label="Upload image"
-                        required>
+                        <i
+                            class="fa-solid fa-cloud-arrow-up"
+                            aria-hidden="true">
+                        </i>
 
-                    <label for="image">
+                        <span>START ANALYSIS</span>
 
-                        <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                    </span>
 
-                        <h3>Select an Image</h3>
 
-                        <p>
-                            Click to browse or Drag & Drop your image here
-                        </p>
+                    <h2 id="upload-title">
+                        Upload an Image
+                    </h2>
 
-                    </label>
-
-                </div>
-
-                <!-- Selected File Name -->
-
-                <p id="file-name" class="file-name">
-
-                    No file selected
-
-                </p>
-
-                <!-- Image Preview -->
-
-                <div class="preview">
-
-                    <img
-                        id="preview-image"
-                        src=""
-                        alt="Image Preview"
-                        loading="lazy">
-
-                </div>
-
-                <!-- Loading Animation -->
-
-                <div
-                    id="loading"
-                    class="loading"
-                    style="display:none;">
-
-                    <i class="fa-solid fa-spinner fa-spin"></i>
 
                     <p>
-
-                        Please wait while AI analyzes your image...
-
+                        Choose an image and let our AI detect
+                        objects and extract readable text.
                     </p>
 
                 </div>
 
-                <!-- Submit Button -->
 
-                <button
-                    type="submit"
-                    class="btn">
 
-                    <i class="fa-solid fa-magnifying-glass"></i>
+                <!-- Supported Formats -->
 
-                    Analyze Image
+                <div
+                    class="upload-info"
+                    aria-label="Upload requirements">
 
-                </button>
 
-            </form>
+                    <div class="upload-info-item">
+
+                        <i
+                            class="fa-solid fa-images"
+                            aria-hidden="true">
+                        </i>
+
+                        <span>
+                            Supported:
+                            <strong>
+                                JPG, JPEG, PNG, BMP, WEBP
+                            </strong>
+                        </span>
+
+                    </div>
+
+
+                    <div class="upload-info-item">
+
+                        <i
+                            class="fa-solid fa-weight-hanging"
+                            aria-hidden="true">
+                        </i>
+
+                        <span>
+                            Maximum:
+                            <strong>16 MB</strong>
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- Upload Form -->
+
+                <form
+                    action="{{ url_for('main.upload') }}"
+                    method="POST"
+                    enctype="multipart/form-data"
+                    id="upload-form">
+
+
+                    <!-- Upload Box -->
+
+                    <div
+                        class="upload-box"
+                        id="upload-box"
+                        role="button"
+                        tabindex="0"
+                        aria-label="Select an image to upload">
+
+
+                        <!-- Hidden File Input -->
+
+                        <input
+                            type="file"
+                            id="image"
+                            name="image"
+                            accept=".jpg,.jpeg,.png,.bmp,.webp,image/jpeg,image/png,image/bmp,image/webp"
+                            aria-label="Choose an image"
+                            required>
+
+
+                        <label for="image">
+
+
+                            <!-- Upload Icon -->
+
+                            <div class="upload-icon-wrapper">
+
+                                <i
+                                    class="fa-solid fa-cloud-arrow-up upload-icon"
+                                    aria-hidden="true">
+                                </i>
+
+                            </div>
+
+
+                            <!-- Upload Title -->
+
+                            <h3>
+                                Drop your image here
+                            </h3>
+
+
+                            <!-- Upload Description -->
+
+                            <p>
+                                Drag and drop your image into this area
+                            </p>
+
+
+                            <!-- OR -->
+
+                            <span class="upload-or">
+                                or
+                            </span>
+
+
+                            <!-- Browse -->
+
+                            <span class="browse-text">
+                                Browse Files
+                            </span>
+
+                        </label>
+
+                    </div>
+
+
+
+                    <!-- Selected File -->
+
+                    <div
+                        id="selected-file"
+                        class="selected-file hidden"
+                        aria-live="polite">
+
+                        <i
+                            class="fa-solid fa-file-image"
+                            aria-hidden="true">
+                        </i>
+
+                        <span id="file-name">
+                            No file selected
+                        </span>
+
+                    </div>
+
+
+
+                    <!-- Image Preview -->
+
+                    <div
+                        id="preview-container"
+                        class="preview hidden"
+                        aria-live="polite">
+
+
+                        <div class="preview-header">
+
+                            <h3>
+
+                                <i
+                                    class="fa-solid fa-image"
+                                    aria-hidden="true">
+                                </i>
+
+                                Image Preview
+
+                            </h3>
+
+                        </div>
+
+
+                        <div class="preview-image-wrapper">
+
+                            <img
+                                id="preview-image"
+                                src="#"
+                                alt="Preview of selected image">
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Loading -->
+
+                    <div
+                        id="loading"
+                        class="loading hidden"
+                        aria-live="polite"
+                        aria-busy="true">
+
+
+                        <div class="loading-icon">
+
+                            <i
+                                class="fa-solid fa-spinner fa-spin"
+                                aria-hidden="true">
+                            </i>
+
+                        </div>
+
+
+                        <h3>
+                            AI is analyzing your image
+                        </h3>
+
+
+                        <p>
+                            YOLOv8 is detecting objects and
+                            EasyOCR is extracting readable text.
+                        </p>
+
+                    </div>
+
+
+
+                    <!-- Analyze Button -->
+
+                    <div class="action-buttons upload-actions">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                            id="analyze-btn">
+
+                            <i
+                                class="fa-solid fa-wand-magic-sparkles"
+                                aria-hidden="true">
+                            </i>
+
+                            <span>
+                                Analyze Image
+                            </span>
+
+                            <i
+                                class="fa-solid fa-arrow-right btn-arrow"
+                                aria-hidden="true">
+                            </i>
+
+                        </button>
+
+                    </div>
+
+
+                </form>
+
+            </div>
 
         </div>
 
@@ -136,84 +391,515 @@ Home | Image & Text Recognition AI
 
 </section>
 
-<!-- ================= Features Section ================= -->
 
-<section class="features">
+
+<!-- =========================================================
+     FEATURES SECTION
+========================================================= -->
+
+<section
+    class="features section"
+    id="features"
+    aria-labelledby="features-title">
 
     <div class="container">
 
-        <h2>Project Features</h2>
+
+        <!-- Section Heading -->
+
+        <div class="section-heading">
+
+            <span class="section-label">
+
+                <i
+                    class="fa-solid fa-sparkles"
+                    aria-hidden="true">
+                </i>
+
+                <span>CORE CAPABILITIES</span>
+
+            </span>
+
+
+            <h2 id="features-title">
+                AI Recognition Features
+            </h2>
+
+
+            <p>
+                A simple interface powered by modern computer
+                vision and optical character recognition technology.
+            </p>
+
+        </div>
+
+
+
+        <!-- Feature Grid -->
 
         <div class="feature-grid">
 
-            <div class="feature-card">
 
-                <i class="fa-solid fa-image"></i>
+            <!-- Object Detection -->
 
-                <h3>Image Upload</h3>
+            <article class="feature-card">
 
-                <p>
-                    Upload images easily using drag & drop or file selection.
-                </p>
+                <div class="feature-icon">
 
-            </div>
+                    <i
+                        class="fa-solid fa-crosshairs"
+                        aria-hidden="true">
+                    </i>
 
-            <div class="feature-card">
+                </div>
 
-                <i class="fa-solid fa-object-group"></i>
 
-                <h3>Object Detection</h3>
+                <h3>
+                    Object Detection
+                </h3>
 
-                <p>
-                    Identify and classify multiple real-world objects using the
-                    YOLOv8 deep learning model.
-                </p>
-
-            </div>
-
-            <div class="feature-card">
-
-                <i class="fa-solid fa-file-lines"></i>
-
-                <h3>Text Extraction</h3>
 
                 <p>
-                    Extract printed text from images using Optical Character
-                    Recognition (OCR).
+                    Detect and identify objects in images
+                    using the YOLOv8 deep learning model.
                 </p>
 
-            </div>
+            </article>
 
-            <div class="feature-card">
 
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
 
-                <h3>Image Enhancement</h3>
+            <!-- OCR -->
+
+            <article class="feature-card">
+
+                <div class="feature-icon">
+
+                    <i
+                        class="fa-solid fa-file-lines"
+                        aria-hidden="true">
+                    </i>
+
+                </div>
+
+
+                <h3>
+                    Text Recognition
+                </h3>
+
 
                 <p>
-                    Improve image quality before OCR and object detection for
-                    better recognition accuracy.
+                    Extract readable text from images using
+                    EasyOCR technology.
                 </p>
 
-            </div>
+            </article>
 
-            <div class="feature-card">
 
-                <i class="fa-solid fa-bolt"></i>
 
-                <h3>Fast Processing</h3>
+            <!-- Image Processing -->
+
+            <article class="feature-card">
+
+                <div class="feature-icon">
+
+                    <i
+                        class="fa-solid fa-sliders"
+                        aria-hidden="true">
+                    </i>
+
+                </div>
+
+
+                <h3>
+                    Image Processing
+                </h3>
+
 
                 <p>
-                    Analyze images and receive AI-powered results within
-                    seconds.
+                    Process uploaded images with OpenCV before
+                    sending them through the recognition pipeline.
                 </p>
 
-            </div>
+            </article>
+
+
+
+            <!-- Detection Confidence -->
+
+            <article class="feature-card">
+
+                <div class="feature-icon">
+
+                    <i
+                        class="fa-solid fa-chart-simple"
+                        aria-hidden="true">
+                    </i>
+
+                </div>
+
+
+                <h3>
+                    Detection Confidence
+                </h3>
+
+
+                <p>
+                    View confidence information for detected
+                    objects to better understand AI predictions.
+                </p>
+
+            </article>
+
+
+
+            <!-- Fast Workflow -->
+
+            <article class="feature-card">
+
+                <div class="feature-icon">
+
+                    <i
+                        class="fa-solid fa-bolt"
+                        aria-hidden="true">
+                    </i>
+
+                </div>
+
+
+                <h3>
+                    Fast Processing
+                </h3>
+
+
+                <p>
+                    Upload an image and receive object detection
+                    and text recognition results through one workflow.
+                </p>
+
+            </article>
+
+
+
+            <!-- Simple Interface -->
+
+            <article class="feature-card">
+
+                <div class="feature-icon">
+
+                    <i
+                        class="fa-solid fa-display"
+                        aria-hidden="true">
+                    </i>
+
+                </div>
+
+
+                <h3>
+                    Simple Interface
+                </h3>
+
+
+                <p>
+                    A clean and responsive interface designed
+                    to make AI image analysis easy to use.
+                </p>
+
+            </article>
+
 
         </div>
 
     </div>
 
 </section>
+
+
+
+<!-- =========================================================
+     TECHNOLOGY SECTION
+========================================================= -->
+
+<section
+    class="how-it-works section"
+    id="technology"
+    aria-labelledby="technology-title">
+
+    <div class="container">
+
+
+        <!-- Section Heading -->
+
+        <div class="section-heading">
+
+            <span class="section-label">
+
+                <i
+                    class="fa-solid fa-microchip"
+                    aria-hidden="true">
+                </i>
+
+                <span>TECHNOLOGY STACK</span>
+
+            </span>
+
+
+            <h2 id="technology-title">
+                Built with AI &amp; Computer Vision
+            </h2>
+
+
+            <p>
+                The application combines multiple technologies
+                to process and understand uploaded images.
+            </p>
+
+        </div>
+
+
+
+        <!-- Technology Steps -->
+
+        <div class="steps">
+
+
+            <!-- Flask -->
+
+            <article class="step">
+
+                <div
+                    class="step-number"
+                    aria-hidden="true">
+
+                    01
+
+                </div>
+
+
+                <div class="step-content">
+
+                    <h3>
+                        Flask
+                    </h3>
+
+
+                    <p>
+                        Handles the web application, image upload
+                        workflow, routes, and server-side processing.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- OpenCV -->
+
+            <article class="step">
+
+                <div
+                    class="step-number"
+                    aria-hidden="true">
+
+                    02
+
+                </div>
+
+
+                <div class="step-content">
+
+                    <h3>
+                        OpenCV
+                    </h3>
+
+
+                    <p>
+                        Processes uploaded images and prepares
+                        them for the recognition pipeline.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- YOLO -->
+
+            <article class="step">
+
+                <div
+                    class="step-number"
+                    aria-hidden="true">
+
+                    03
+
+                </div>
+
+
+                <div class="step-content">
+
+                    <h3>
+                        YOLOv8 + EasyOCR
+                    </h3>
+
+
+                    <p>
+                        YOLOv8 detects objects while EasyOCR
+                        extracts readable text from the image.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================================
+     WORKFLOW SECTION
+========================================================= -->
+
+<section
+    class="how-it-works section"
+    aria-labelledby="workflow-title">
+
+    <div class="container">
+
+
+        <div class="section-heading">
+
+            <span class="section-label">
+
+                <i
+                    class="fa-solid fa-list-check"
+                    aria-hidden="true">
+                </i>
+
+                <span>HOW IT WORKS</span>
+
+            </span>
+
+
+            <h2 id="workflow-title">
+                Analyze an Image in 3 Steps
+            </h2>
+
+
+            <p>
+                From upload to AI results in a simple workflow.
+            </p>
+
+        </div>
+
+
+
+        <div class="steps">
+
+
+            <!-- Step 1 -->
+
+            <article class="step">
+
+                <div
+                    class="step-number"
+                    aria-hidden="true">
+
+                    01
+
+                </div>
+
+
+                <div class="step-content">
+
+                    <h3>
+                        Upload
+                    </h3>
+
+
+                    <p>
+                        Select an image from your device or
+                        drag and drop it into the upload area.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- Step 2 -->
+
+            <article class="step">
+
+                <div
+                    class="step-number"
+                    aria-hidden="true">
+
+                    02
+
+                </div>
+
+
+                <div class="step-content">
+
+                    <h3>
+                        Process
+                    </h3>
+
+
+                    <p>
+                        The Flask backend sends the image through
+                        OpenCV, YOLOv8, and OCR processing.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+
+            <!-- Step 3 -->
+
+            <article class="step">
+
+                <div
+                    class="step-number"
+                    aria-hidden="true">
+
+                    03
+
+                </div>
+
+
+                <div class="step-content">
+
+                    <h3>
+                        View Results
+                    </h3>
+
+
+                    <p>
+                        Review detected objects, confidence values,
+                        and extracted text from the processed image.
+                    </p>
+
+                </div>
+
+            </article>
+
+
+        </div>
+
+    </div>
+
+</section>
+
 
 {% endblock %}

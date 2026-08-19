@@ -5,18 +5,26 @@ from routes.main import main
 
 
 def create_app():
+    """
+    Application Factory.
+
+    Creates and configures the Flask application,
+    registers routes, and prepares required directories.
+    """
+
+    # Create Flask application
     app = Flask(__name__)
 
-    # Load Configuration
+    # Load application configuration
     app.config.from_object(Config)
 
-    # Create Required Folders
+    # Create required project directories
     Config.create_directories()
 
-    # Register Blueprint
+    # Register main application routes
     app.register_blueprint(main)
 
-    # Serve Uploaded Images
+    # Serve uploaded images
     @app.route("/uploads/<filename>")
     def uploaded_file(filename):
         return send_from_directory(
@@ -27,6 +35,7 @@ def create_app():
     return app
 
 
+# Run application directly
 if __name__ == "__main__":
     app = create_app()
 

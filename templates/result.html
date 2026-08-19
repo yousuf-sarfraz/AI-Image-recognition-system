@@ -1,3 +1,4 @@
+```html id="j8r4qm"
 {% extends "layout.html" %}
 
 {% block title %}
@@ -6,63 +7,203 @@ Recognition Results | Image & Text Recognition AI
 
 {% block content %}
 
+<!-- ================= Results Hero ================= -->
+
+<section class="results-hero">
+
+    <div class="container">
+
+        <div class="results-hero-content">
+
+            <div class="hero-badge">
+                <i class="fa-solid fa-circle-check"></i>
+                ANALYSIS COMPLETE
+            </div>
+
+            <h1>
+                Recognition
+                <span>Results</span>
+            </h1>
+
+            <p>
+                Your image has been processed successfully.
+                Review the detected objects and extracted text below.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
 <!-- ================= Results Section ================= -->
 
 <section class="results-section">
 
     <div class="container">
 
-        <h1>Recognition Results</h1>
 
-        <p class="section-description">
-            Below are the AI-generated results after analyzing your uploaded image.
-        </p>
+        <!-- ================= Result Overview ================= -->
 
-        <div class="results-grid">
+        <div class="result-overview">
 
-            <!-- Uploaded Image -->
+            <div class="result-stat">
 
-            <div class="result-card">
-
-                <h2>
-
+                <div class="result-stat-icon">
                     <i class="fa-solid fa-image"></i>
+                </div>
 
-                    Uploaded Image
+                <div>
 
-                </h2>
+                    <span class="result-stat-label">
+                        Image
+                    </span>
 
-                <img
-                    src="{{ url_for('uploaded_file', filename=image) }}"
-                    alt="Uploaded Image"
-                    class="result-image"
-                    loading="lazy">
+                    <strong>
+                        Processed
+                    </strong>
+
+                </div>
 
             </div>
 
-            <!-- Extracted Text -->
 
-            <div class="result-card">
+            <div class="result-stat">
 
-                <h2>
+                <div class="result-stat-icon">
+                    <i class="fa-solid fa-object-group"></i>
+                </div>
 
+                <div>
+
+                    <span class="result-stat-label">
+                        Objects
+                    </span>
+
+                    <strong>
+                        {{ objects|length }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="result-stat">
+
+                <div class="result-stat-icon">
                     <i class="fa-solid fa-file-lines"></i>
+                </div>
 
-                    Extracted Text
+                <div>
 
-                </h2>
+                    <span class="result-stat-label">
+                        Text
+                    </span>
+
+                    <strong>
+                        {% if text %}
+                            Found
+                        {% else %}
+                            Not Found
+                        {% endif %}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= Main Results Grid ================= -->
+
+        <div class="results-grid">
+
+
+            <!-- ================= Uploaded Image ================= -->
+
+            <div class="result-card image-result-card">
+
+                <div class="result-card-header">
+
+                    <div>
+
+                        <span class="result-label">
+                            <i class="fa-solid fa-image"></i>
+                            SOURCE IMAGE
+                        </span>
+
+                        <h2>
+                            Uploaded Image
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="result-image-container">
+
+                    <img
+                        src="{{ url_for('uploaded_file', filename=image) }}"
+                        alt="Uploaded image analyzed by ImageAI"
+                        class="result-image"
+                        loading="lazy">
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= Extracted Text ================= -->
+
+            <div class="result-card text-result-card">
+
+                <div class="result-card-header">
+
+                    <div>
+
+                        <span class="result-label">
+                            <i class="fa-solid fa-file-lines"></i>
+                            OCR RESULT
+                        </span>
+
+                        <h2>
+                            Extracted Text
+                        </h2>
+
+                    </div>
+
+                </div>
+
 
                 {% if text %}
 
-                <pre>{{ text }}</pre>
+                <div class="text-result">
+
+                    <pre>{{ text }}</pre>
+
+                </div>
 
                 {% else %}
 
-                <p class="empty-result">
+                <div class="empty-result-box">
 
-                    No readable text was found.
+                    <div class="empty-result-icon">
+                        <i class="fa-solid fa-file-circle-xmark"></i>
+                    </div>
 
-                </p>
+                    <h3>
+                        No Text Found
+                    </h3>
+
+                    <p>
+                        No readable text was detected in this image.
+                    </p>
+
+                </div>
 
                 {% endif %}
 
@@ -70,76 +211,204 @@ Recognition Results | Image & Text Recognition AI
 
         </div>
 
-        <!-- Detected Objects -->
 
-        <div class="result-card">
+        <!-- ================= Detected Objects ================= -->
 
-            <h2>
+        <div class="result-card objects-result-card">
 
-                <i class="fa-solid fa-object-group"></i>
+            <div class="result-card-header">
 
-                Detected Objects
+                <div>
 
-            </h2>
+                    <span class="result-label">
+                        <i class="fa-solid fa-crosshairs"></i>
+                        YOLOv8 DETECTION
+                    </span>
+
+                    <h2>
+                        Detected Objects
+                    </h2>
+
+                </div>
+
+
+                {% if objects %}
+
+                <div class="object-count">
+
+                    <i class="fa-solid fa-cubes"></i>
+
+                    {{ objects|length }}
+                    detected
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
 
             {% if objects %}
 
-            <table>
+            <div class="table-wrapper">
 
-                <thead>
+                <table class="results-table">
 
-                    <tr>
+                    <thead>
 
-                        <th>#</th>
+                        <tr>
 
-                        <th>Object</th>
+                            <th>
+                                #
+                            </th>
 
-                        <th>Confidence</th>
+                            <th>
+                                Object
+                            </th>
 
-                    </tr>
+                            <th>
+                                Confidence
+                            </th>
 
-                </thead>
+                            <th>
+                                Confidence Level
+                            </th>
 
-                <tbody>
+                        </tr>
 
-                    {% for object in objects %}
+                    </thead>
 
-                    <tr>
 
-                        <td>{{ loop.index }}</td>
+                    <tbody>
 
-                        <td>{{ object.class_name }}</td>
+                        {% for object in objects %}
 
-                        <td>{{ object.confidence }}%</td>
+                        <tr>
 
-                    </tr>
+                            <td>
 
-                    {% endfor %}
+                                <span class="object-number">
+                                    {{ loop.index }}
+                                </span>
 
-                </tbody>
+                            </td>
 
-            </table>
 
-            <p class="summary">
+                            <td>
+
+                                <div class="object-name">
+
+                                    <i class="fa-solid fa-cube"></i>
+
+                                    <strong>
+                                        {{ object.class_name }}
+                                    </strong>
+
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <strong class="confidence-value">
+                                    {{ object.confidence }}%
+                                </strong>
+
+                            </td>
+
+
+                            <td>
+
+                                <div class="confidence-bar">
+
+                                    <div
+                                        class="confidence-progress"
+                                        style="width: {{ object.confidence }}%;">
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- Detection Summary -->
+
+            <div class="summary">
+
+                <i class="fa-solid fa-chart-simple"></i>
 
                 Total Objects Detected:
-                <strong>{{ objects|length }}</strong>
 
-            </p>
+                <strong>
+                    {{ objects|length }}
+                </strong>
+
+            </div>
+
 
             {% else %}
 
-            <p class="empty-result">
+            <div class="empty-result-box">
 
-                No objects were detected in the uploaded image.
+                <div class="empty-result-icon">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </div>
 
-            </p>
+                <h3>
+                    No Objects Detected
+                </h3>
+
+                <p>
+                    The YOLOv8 model did not detect any supported
+                    objects in the uploaded image.
+                </p>
+
+            </div>
 
             {% endif %}
 
         </div>
 
-        <!-- Action Buttons -->
+
+        <!-- ================= Analysis Information ================= -->
+
+        <div class="analysis-info">
+
+            <div class="analysis-info-icon">
+
+                <i class="fa-solid fa-circle-info"></i>
+
+            </div>
+
+            <div>
+
+                <h3>
+                    About These Results
+                </h3>
+
+                <p>
+                    Object confidence represents the model's estimated
+                    confidence for each detected object. OCR results
+                    contain text identified by the recognition system.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= Action Buttons ================= -->
 
         <div class="action-buttons">
 
@@ -160,3 +429,4 @@ Recognition Results | Image & Text Recognition AI
 </section>
 
 {% endblock %}
+```

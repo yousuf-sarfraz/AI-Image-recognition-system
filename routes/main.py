@@ -1,78 +1,281 @@
+# ============================================================
+# Routes
+# Image & Text Recognition AI
+# ============================================================
+
+import logging
+import os
+
 from flask import (
     Blueprint,
+    current_app,
+    flash,
+    redirect,
     render_template,
     request,
-    redirect,
     url_for,
-    current_app,
 )
 
-from werkzeug.utils import secure_filename
-
-import os
-import uuid
-
-from services.ocr import OCRService
 from services.detector import ObjectDetector
 from services.image_processor import ImageProcessor
+from services.ocr import OCRService
 
-main = Blueprint("main", __name__)
+from utils import (
+    allowed_file,
+    save_uploaded_file,
+    delete_file,
+)
+
+
+# ============================================================
+# Blueprint
+# ============================================================
+
+main = Blueprint(
+    "main",
+    __name__
+)
+
+
+# ============================================================
+# Logger
+# ============================================================
+
+logger = logging.getLogger(__name__)
+
+
+# ============================================================
+# AI Services
+# ============================================================
 
 ocr_service = OCRService()
+
 object_detector = ObjectDetector()
+
 image_processor = ImageProcessor()
 
 
-def allowed_file(filename):
-    return (
-        "." in filename
-        and filename.rsplit(".", 1)[1].lower()
-        in current_app.config["ALLOWED_EXTENSIONS"]
-    )
-
+# ============================================================
+# Home Route
+# ============================================================
 
 @main.route("/")
 def home():
-    return render_template("index.html")
+    """
+    Display the main ImageAI page.
+    """
 
+    return render_template(
+        "index.html"
+    )
+
+
+# ============================================================
+# About Route
+# ============================================================
 
 @main.route("/about")
 def about():
-    return render_template("about.html")
+    """
+    Display the About page.
+    """
+
+    return render_template(
+        "about.html"
+    )
 
 
-@main.route("/upload", methods=["POST"])
+# ============================================================
+# Upload Route
+# ============================================================
+
+@main.route(
+    "/upload",
+    methods=["POST"]
+)
 def upload():
+    """
+    Handle image upload and AI processing.
+
+    Processing pipeline:
+
+        Upload
+          ↓
+        Validate
+          ↓
+        Save Image
+          ↓
+        Image Preprocessing
+          ↓
+        OCR
+          ↓
+        Object Detection
+          ↓
+        Results Page
+    """
+
+    # ========================================================
+    # Check File
+    # ========================================================
 
     if "image" not in request.files:
-        return redirect(url_for("main.home"))
+
+        flash(
+            "Please select an image to upload.",
+            "error"
+        )
+
+        return redirect(
+            url_for("main.home")
+        )
+
 
     image = request.files["image"]
 
-    if image.filename == "":
-        return redirect(url_for("main.home"))
+
+    # ========================================================
+    # Check Filename
+    # ========================================================
+
+    if not image.filename:
+
+        flash(
+            "Please select an image to upload.",
+            "error"
+        )
+
+        return redirect(
+            url_for("main.home")
+        )
+
+
+    # ========================================================
+    # Validate File Type
+    # ========================================================
 
     if not allowed_file(image.filename):
-        return redirect(url_for("main.home"))
 
-    filename = f"{uuid.uuid4()}_{secure_filename(image.filename)}"
+        flash(
+            "Invalid file type. "
+            "Please upload PNG, JPG, JPEG, BMP, or WEBP.",
+            "error"
+        )
 
-    upload_path = os.path.join(
-        current_app.config["UPLOAD_FOLDER"],
-        filename,
-    )
+        return redirect(
+            url_for("main.home")
+        )
 
-    image.save(upload_path)
+
+    # ========================================================
+    # File Processing
+    # ========================================================
+
+    upload_path = None
+    filename = None
 
     try:
-        processed_image = image_processor.process_image(upload_path)
 
-        extracted_text = ocr_service.extract_text(processed_image)
+        # ----------------------------------------------------
+        # Save Uploaded File
+        # ----------------------------------------------------
 
-        detected_objects = object_detector.detect_objects(processed_image)
+        upload_path, filename = save_uploaded_file(
+            image,
+            current_app.config["UPLOAD_FOLDER"]
+        )
 
-    except Exception as e:
-        return f"Error: {e}", 500
+        logger.info(
+            "Image uploaded successfully: %s",
+            filename
+        )
+
+
+        # ----------------------------------------------------
+        # Image Preprocessing
+        # ----------------------------------------------------
+
+        processed_image = image_processor.process_image(
+            upload_path
+        )
+
+        logger.info(
+            "Image preprocessing completed: %s",
+            filename
+        )
+
+
+        # ----------------------------------------------------
+        # OCR
+        # ----------------------------------------------------
+
+        extracted_text = ocr_service.extract_text(
+            processed_image
+        )
+
+        logger.info(
+            "OCR completed: %s",
+            filename
+        )
+
+
+        # ----------------------------------------------------
+        # Object Detection
+        # ----------------------------------------------------
+
+        detected_objects = object_detector.detect_objects(
+            processed_image
+        )
+
+        logger.info(
+            "Object detection completed: %s",
+            filename
+        )
+
+
+        # ----------------------------------------------------
+        # Processing Complete
+        # ----------------------------------------------------
+
+        logger.info(
+            "Image processing completed successfully: %s",
+            filename
+        )
+
+
+    except Exception as error:
+
+        logger.exception(
+            "Error while processing image '%s': %s",
+            filename,
+            error
+        )
+
+
+        # ----------------------------------------------------
+        # Cleanup Uploaded File
+        # ----------------------------------------------------
+
+        if upload_path:
+
+            delete_file(
+                upload_path
+            )
+
+
+        flash(
+            "Something went wrong while processing "
+            "the image. Please try again.",
+            "error"
+        )
+
+        return redirect(
+            url_for("main.home")
+        )
+
+
+    # ========================================================
+    # Display Results
+    # ========================================================
 
     return render_template(
         "result.html",
